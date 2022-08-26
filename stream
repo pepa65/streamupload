@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# stream - Stream video when called from crontab
+
+in=/var/www/uploadpage/uploads/$1.mp4 key=${1%%.*}
+/usr/bin/ffmpeg -re -y -i $in -c:v copy -c:a copy \
+	-f flv "rtmp://singapore.restream.io/live/$key"

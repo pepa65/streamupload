@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# prep - Encode for streaming and schedule cron job
+# Usage:  prep <upload>
+#   (called from upload.php in /var/www/uploadpage)
+#   <upload>: "re_[0-9a-f_]*.YYYY-MM-DD_hh:mm" in /var/www/uploadpage/uploads/
+
+log=/var/www/upload.log
+dir=/var/www/uploadpage/uploads
+name=$1 file=$dir/$name key=${name%%.*} date=${name##*.}
+type=$(file -bL --mime-type "$file")
+[[ ! ${type:0:5} = video ]] &&
+	echo "$type" && exit 1
+
+# Convert videofile
+/usr/bin/ffmpeg -y -i "$file" \
+	-vcodec libx264 -force_key_frames 'expr:gte(t,n_forced*2)' -b:v 5m -acodec copy "$file.mp4" &&
+	sync &&
+	sleep 1 &&
+	/usr/bin/rm "$file" ||
+	exit 2
+
+# Schedule cron job
+m=${date:14:2} m=${m#0} h=${date:11:2} h=${h#0}
+D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
+/usr/bin/crontab -l ||
+	echo -e "# m h dom mon dow  command\n" |/usr/bin/crontab -
+line="$m $h $D $M "'*'"  /var/www/stream $name"
+echo -e "$(/usr/bin/crontab -l)\n$line" |/usr/bin/crontab -
+echo "crontab:  '$line'" >>"$log"
+
+exit 0
