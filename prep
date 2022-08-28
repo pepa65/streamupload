@@ -33,8 +33,8 @@ type=$(file -bL --mime-type "$file")
 ## Single pass
 #/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
 # Double pass
-/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -pass 1 -f mp4 "$video" &&
-	/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -pass 2 -f mp4 "$video" ||
+/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -f mp4 "$video" &&
+	/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -f mp4 "$video" ||
 	Log "Error encoding $name" 2
 
 # Schedule cron job
