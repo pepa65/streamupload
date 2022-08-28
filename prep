@@ -1,31 +1,44 @@
 #!/usr/bin/env bash
+
 # prep - Encode for streaming and schedule cron job
-# Usage:  prep <upload>
-#   (called from upload.php in /var/www/uploadpage)
-#   <upload>: "re_[0-9a-f_]*.YYYY-MM-DD_hh:mm" in /var/www/uploadpage/uploads/
+# Usage:  prep
+#   Called by cron every minute; process oldest .upload file in /var/www/uploadpage/streams)
 
-log=/var/www/upload.log
-dir=/var/www/uploadpage/uploads
-name=$1 file=$dir/$name key=${name%%.*} date=${name##*.}
+log=/var/www/encoding.log
+dir=/var/www/uploadpage/streams
+
+# Check for oldest uploaded file
+upload=$(/usr/bin/ls -1tr "$dir"/*.upload 2>/dev/null |head -1)
+
+# Finished if no /var/www/uploadpage/streams/*.upload files found
+[[ $upload ]] || exit 0
+
+Log(){ # 1:message 2:returncode
+	echo "$1">>"$log"
+	# Remove source (if returncode not zero)
+	/usr/bin/sync
+	/usr/bin/sleep 1
+	(($2)) && /usr/bin/rm "$file"
+	exit $2
+}
+
+# Rename upload and check type
+file=${upload%.upload} name=${file##*/} key=${name%%.*} date=${name##*.} video=$file.mp4
+/usr/bin/mv "$upload" "$file"
+
 type=$(file -bL --mime-type "$file")
-[[ ! ${type:0:5} = video ]] &&
-	echo "$type" && exit 1
+[[ ! ${type:0:5} = video ]] && Log "File $name is of type $type" 1
 
-# Convert videofile
-/usr/bin/ffmpeg -y -i "$file" \
-	-vcodec libx264 -force_key_frames 'expr:gte(t,n_forced*2)' -b:v 5m -acodec copy "$file.mp4" &&
-	sync &&
-	sleep 1 &&
-	/usr/bin/rm "$file" ||
-	exit 2
+# Encode video
+/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
+	Log "Error encoding $name" 2
 
 # Schedule cron job
 m=${date:14:2} m=${m#0} h=${date:11:2} h=${h#0}
 D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
 /usr/bin/crontab -l ||
 	echo -e "# m h dom mon dow  command\n" |/usr/bin/crontab -
-line="$m $h $D $M "'*'"  /var/www/stream $name"
+line="$m $h $D $M "'*'"  /var/www/stream '${video##*/}'"
 echo -e "$(/usr/bin/crontab -l)\n$line" |/usr/bin/crontab -
-echo "crontab:  '$line'" >>"$log"
 
-exit 0
+Log "crontab:  '$line'" 0

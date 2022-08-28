@@ -21,9 +21,9 @@ $upload=htmlspecialchars(basename($_FILES['fileToUpload']['name']));
 $key=$_POST['streamkey'];
 $date=$_POST['date'];
 $time=$_POST['time'];
-$dir='uploads/';
+$dir='streams/';
 $name=$key.'.'.$date.'_'.$time;
-$file=$dir.$name;
+$file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Uploading</title>
@@ -46,14 +46,6 @@ if(!move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file)){
 	back('Error moving the file');
 }
 
-$res=exec('../prep '.$name, $output, $ret);
-if($ret==1){
-	back('Not a video file, but of type: '.$res);
-}
-if($ret==2){
-	back('Error with the encoding');
-}
-
-print('File uploaded as "'.$name.'"<br>
+back('File is now being encoded to "'.$name.'.mp4"<br>
 Scheduled for '.$date.' at '.$time);
 ?>

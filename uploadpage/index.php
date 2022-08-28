@@ -13,7 +13,7 @@ function respond(){
 			<tr><td colspan=2 align=center><h1>Video Upload Page</h1></td></tr>
 		  <tr>
 				<td>Streamkey:</td>
-				<td><input type="text" name="streamkey" id="streamkey" required title="re_ followed by a string of 0-9, a-f or underscore characters (20 or longer)" pattern="re_[a-f0-9_]{20,}"></td></tr>
+				<td><input type="text" name="streamkey" id="streamkey" required title="string of 0-9, a-z or underscore characters" pattern="[a-z0-9_]+"></td></tr>
 	  	<tr>
 				<td>Date:</td>
 				<td><input type="date" name="date" id="date" required></td></tr>

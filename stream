@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
-# stream - Stream video when called from crontab
 
-in=/var/www/uploadpage/uploads/$1.mp4 key=${1%%.*}
+# stream - Stream video when called from crontab
+# Usage:  stream <video>
+#   The video should have been re-encoded by `prep` first,
+#   and have the streamkey at the start of the filename.
+
+in=/var/www/uploadpage/streams/$1 key=${1%%.*}
 /usr/bin/ffmpeg -re -y -i $in -c:v copy -c:a copy \
 	-f flv "rtmp://singapore.restream.io/live/$key"
+#	-f flv "rtmp://live.restream.io/live/$key"
+#	-f flv "rtmp://a.rtmp.youtube.com/live2/$key"
+#	-f flv "rtmps://live-api-s.facebook.com:443/rtmp/$key"
