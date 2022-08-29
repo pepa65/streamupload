@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <title>Stream Upload</title>
-<link rel="icon" href="streamupload.png">
+<link rel="icon" href="favicon.png">
 <script>
 function respond(){
 	const feedback = document.getElementById('response');
