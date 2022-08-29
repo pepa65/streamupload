@@ -27,6 +27,7 @@ $file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Encoding</title>
+<link rel="icon" href="streamupload.png">
 <div style="display:flex; flex-direction:column; justify-content:center; text-align:center; align-items:center; height:95vh;">
 <h3>Encoding</h3>
 File: '.$upload);
