@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 
-# prep - Encode for streaming and schedule cron job
-# Usage:  prep
-#   Called by cron every minute; process oldest .upload file in /var/www/uploadpage/streams)
+# encode - Encode for streaming and schedule cron job
+# Usage:  encode
+#   Called by cron every minute; process oldest .upload file in uploadpage/streams)
 
-log=/var/www/encoding.log
-dir=/var/www/uploadpage/streams
+repopath=/var/www
+log=$repopath/process.log
+dir=$repopath/uploadpage/streams
 
 # Check for oldest uploaded file
 upload=$(/usr/bin/ls -1tr "$dir"/*.upload 2>/dev/null |head -1)
 
-# Finished if no /var/www/uploadpage/streams/*.upload files found
+# Finished if no uploadpage/streams/*.upload files found
 [[ $upload ]] || exit 0
 
 Log(){ # 1:message 2:returncode
@@ -18,7 +19,7 @@ Log(){ # 1:message 2:returncode
 	# Remove source (if returncode not zero)
 	/usr/bin/sync
 	/usr/bin/sleep 1
-	(($2)) && /usr/bin/rm "$file"
+	#(($2)) && /usr/bin/rm "$file"
 	exit $2
 }
 
@@ -33,16 +34,16 @@ type=$(file -bL --mime-type "$file")
 ## Single pass
 #/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
 # Double pass
-/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -f mp4 "$video" &&
-	/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -f mp4 "$video" ||
+/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 1M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -f mp4 "$video" &&
+	/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 1M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -f mp4 "$video" ||
 	Log "Error encoding $name" 2
 
 # Schedule cron job
-m=${date:14:2} m=${m#0} h=${date:11:2} h=${h#0}
+m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
 D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
 /usr/bin/crontab -l ||
 	echo -e "# m h dom mon dow  command\n" |/usr/bin/crontab -
-line="$m $h $D $M "'*'"  /var/www/stream '${video##*/}'"
+line="$m $h $D $M "'*'"  $repopath/stream '${video##*/}'"
 echo -e "$(/usr/bin/crontab -l)\n$line" |/usr/bin/crontab -
 
 Log "crontab:  '$line'" 0

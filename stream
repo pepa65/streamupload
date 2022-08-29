@@ -2,12 +2,18 @@
 
 # stream - Stream video when called from crontab
 # Usage:  stream <video>
-#   The video should have been re-encoded by `prep` first,
+#   The video should have been re-encoded by `encode` first,
 #   and have the streamkey at the start of the filename.
 
-in=/var/www/uploadpage/streams/$1 key=${1%%.*}
-/usr/bin/ffmpeg -re -y -i $in -c:v copy -c:a copy \
-	-f flv "rtmp://singapore.restream.io/live/$key"
-#	-f flv "rtmp://live.restream.io/live/$key"
-#	-f flv "rtmp://a.rtmp.youtube.com/live2/$key"
-#	-f flv "rtmps://live-api-s.facebook.com:443/rtmp/$key"
+repopath=/var/www
+log=$repopath/process.log
+in=$repopath/uploadpage/streams/$1 key=${1%%.*} target=${1##*@}
+case $target in
+Facebook) rtmp=rtmps://live-api-s.facebook.com:443/rtmp/$key ;;
+YouTube) rtmp=rtmp://a.rtmp.youtube.com/live2/$key ;;
+RestreamSG) rtmp=rtmp://singapore.restream.io/live/$key ;;
+*) rtmp=rtmp://live.restream.io/live/$key
+esac
+
+/usr/bin/ffmpeg -re -y -i $in -c:v copy -c:a copy -f flv "$rtmp" ||
+	echo "Error while streaming $1" >>"$log"

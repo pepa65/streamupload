@@ -1,18 +1,15 @@
 <?php
 error_reporting(E_ALL);
-set_time_limit(0);
-//ob_implicit_flush(true);
-//ob_end_flush();
+//set_time_limit(0);
 if($_SERVER['REQUEST_METHOD']!=='POST'){
 	header('Location: /');
 }
 
-function back($msg){
-	print($msg);
-	print('<br><br>
+function Back($msg){
+	print('<br>&nbsp;<br>'.$msg.'<br>&nbsp;<br>
 <form action="/" method="post">
 <input type="submit" value="Upload another file" name="submit">
-</form>');
+</form></div>');
 	exit;
 }
 
@@ -20,32 +17,34 @@ header('Content-type: text/html; charset=utf-8');
 $upload=htmlspecialchars(basename($_FILES['fileToUpload']['name']));
 $key=$_POST['streamkey'];
 $date=$_POST['date'];
-$time=$_POST['time'];
+$hour=substr($_POST['time'], 0, 2);
+$min=substr($_POST['time'], 3, 2);
+$time=$hour.$min;
+$target=$_POST['target'];
 $dir='streams/';
-$name=$key.'.'.$date.'_'.$time;
+$name=$key.'.'.$date.'_'.$time.'@'.$target;
 $file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
-<title>Uploading</title>
-<h3>Uploading</h3>
-File: '.$upload.'<br>');
-ob_flush();
-flush();
-$now=date('Y-m-dH:i');
+<title>Encoding</title>
+<div style="display:flex; flex-direction:column; justify-content:center; text-align:center; align-items:center; height:95vh;">
+<h3>Encoding</h3>
+File: '.$upload);
+$now=date('Y-m-dHi');
 if(strcmp($now, $date.$time)>0){
-	back('Scheduling '.$now.' in the past: '.$date.' '.$time);
+	Back('Scheduling '.$now.' in the past: '.$date.' '.$time);
 }
-$nextyear=date('Y-m-dH:i', strtotime('+1 year'));
+$nextyear=date('Y-m-dHi', strtotime('+1 year'));
 if(strcmp($nextyear, $date.$time)<0){
-	back('Scheduling too far into the future: '.$date.' '.$time);
+	Back('Scheduling too far into the future: '.$date.' '.$time);
 }
 if($_FILES['fileToUpload']['error']!=UPLOAD_ERR_OK){
-	back('Error uploading the file');
+	Back('Error uploading the file');
 }
 if(!move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file)){
-	back('Error moving the file');
+	Back('Error moving the file');
 }
 
-back('File is now being encoded to "'.$name.'.mp4"<br>
-Scheduled for '.$date.' at '.$time);
+Back('File is now being encoded to "'.$name.'.mp4"<br>&nbsp;<br>
+Scheduling for '.$date.' at '.$hour.':'.$min.'h on '.$target);
 ?>
