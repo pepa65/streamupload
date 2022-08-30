@@ -16,9 +16,9 @@ function Back($msg){
 header('Content-type: text/html; charset=utf-8');
 $upload=htmlspecialchars(basename($_FILES['fileToUpload']['name']));
 $key=$_POST['streamkey'];
-$date=$_POST['date'];
-$hour=substr($_POST['time'], 0, 2);
-$min=substr($_POST['time'], 3, 2);
+$date=substr($_POST['datetime'], 0, 10);
+$hour=substr($_POST['datetime'], 11, 2);
+$min=substr($_POST['datetime'], 14, 2);
 $time=$hour.$min;
 $target=$_POST['target'];
 $dir='streams/';
@@ -28,8 +28,9 @@ print('<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Encoding</title>
 <link rel="icon" href="favicon.png">
-<div style="display:flex; flex-direction:column; justify-content:center; text-align:center; align-items:center; height:95vh;">
-<h3>Encoding</h3>
+<link rel="stylesheet" href="style.css">
+<div class="container">
+<h1>Encoding</h1>
 File: '.$upload);
 $now=date('Y-m-dHi');
 if(strcmp($now, $date.$time)>0){
