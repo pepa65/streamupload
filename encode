@@ -43,7 +43,7 @@ m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
 D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
 /usr/bin/crontab -l ||
 	echo -e "# m h dom mon dow  command\n" |/usr/bin/crontab -
-line="$m $h $D $M "'*'"  $repopath/stream '${video##*/}'"
+line="$m $h $D $M "'*'"  $repopath/stream '$name'"
 echo -e "$(/usr/bin/crontab -l)\n$line" |/usr/bin/crontab -
 
 Log "crontab:  '$line'" 0

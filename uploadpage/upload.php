@@ -16,9 +16,10 @@ function Back($msg){
 header('Content-type: text/html; charset=utf-8');
 $upload=htmlspecialchars(basename($_FILES['fileToUpload']['name']));
 $key=$_POST['streamkey'];
-$date=substr($_POST['datetime'], 0, 10);
-$hour=substr($_POST['datetime'], 11, 2);
-$min=substr($_POST['datetime'], 14, 2);
+$datetime=$_POST['datetime'];
+$date=substr($datetime, 0, 10);
+$hour=substr($datetime, 11, 2);
+$min=substr($datetime, 14, 2);
 $time=$hour.$min;
 $target=$_POST['target'];
 $dir='streams/';
@@ -32,6 +33,9 @@ print('<!DOCTYPE html>
 <div class="container">
 <h1>Encoding</h1>
 File: '.$upload);
+if(preg_match('/20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-6][0-9]/', $datetime)===false){
+	Back('Date/time somehow incorrect: '.$datetime);
+}
 $now=date('Y-m-dHi');
 if(strcmp($now, $date.$time)>0){
 	Back('Scheduling '.$now.' in the past: '.$date.' '.$time);

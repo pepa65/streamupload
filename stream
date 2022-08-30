@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
 # stream - Stream video when called from crontab
-# Usage:  stream <video>
-#   The video should have been re-encoded by `encode` first,
-#   and have the streamkey at the start of the filename.
+# Usage:  stream <tag>
+#   The tag refers to video files in $repopath/uploadpage/streams without the
+#   '.mp4', that should have been re-encoded by `encode`. The tag has no path
+#   information, has the "streamkey" at the start before the dot (it has to have
+#   a dot!) and the "target" at the very end, after the '@'.
 
 repopath=/var/www
 log=$repopath/process.log
-in=$repopath/uploadpage/streams/$1 key=${1%%.*} target=${1##*@}
+in=$repopath/uploadpage/streams/$1.mp4 key=${1%%.*} target=${1##*@}
 case $target in
 Facebook) rtmp=rtmps://live-api-s.facebook.com:443/rtmp/$key ;;
 YouTube) rtmp=rtmp://a.rtmp.youtube.com/live2/$key ;;

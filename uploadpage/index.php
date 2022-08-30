@@ -25,7 +25,7 @@ function respond(){
 				</td></tr>
 			<tr>
 				<td class="left">Streamkey:</td>
-				<td class="right"><input type="text" name="streamkey" id="streamkey" required title="string of 0-9, a-z, A-Z or underscore characters" pattern="[a-zA-Z0-9_]+"></td></tr>
+				<td class="right"><input type="text" name="streamkey" id="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
 			<tr>
 	 	 		<td>Date and Time:</td>
 				<td><input type="datetime-local" name="datetime" id="datetime" required></td></tr>
