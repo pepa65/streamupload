@@ -7,7 +7,7 @@
 #   information, has the "streamkey" at the start before the dot (it has to have
 #   a dot!) and the "target" at the very end, after the '@'.
 
-repopath=/var/www
+_=$(realpath -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
 log=$repopath/process.log
 in=$repopath/uploadpage/streams/$1.mp4 key=${1%%.*} target=${1##*@}
 case $target in

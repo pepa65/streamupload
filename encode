@@ -4,23 +4,32 @@
 # Usage:  encode
 #   Called by cron every minute; process oldest .upload file in uploadpage/streams)
 
-repopath=/var/www
-log=$repopath/process.log
-dir=$repopath/uploadpage/streams
-
 # Check for oldest uploaded file
+_=$(realpath -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
+log=$repopath/process.log dir=$repopath/uploadpage/streams
 upload=$(/usr/bin/ls -1tr "$dir"/*.upload 2>/dev/null |head -1)
 
 # Finished if no uploadpage/streams/*.upload files found
 [[ $upload ]] || exit 0
 
-Log(){ # 1:message 2:returncode
+Log(){ # 1:message 2:returncode(empty: no exit) I:file
 	echo "$1">>"$log"
-	# Remove source (if returncode not zero)
-	/usr/bin/sync
-	/usr/bin/sleep 1
-	#(($2)) && /usr/bin/rm "$file"
-	exit $2
+	[[ $2 ]] && exit $2
+}
+
+Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:to,user,password,smtp,port,name,type,start,finish
+	local sbj msg from="Stream Upload server"
+	source "$repopath/mailvars"
+	sbj[0]="Stream upload done for ${name##*@}"
+	sbj[1]="Stream upload wrong type: $type"
+	sbj[2]="Stream upload error encoding"
+	msg[0]="Heya,\n\nThe video $name started encoding on $start and finished on $finish.\n\nStream Upload server"
+	msg[1]="Heya,\n\nThe file $name from $start is of type $type and could not be used.\n\nStream Upload server\n"
+	msg[2]="Heya,\n\nThe file $name started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
+	[[ $to && $user && $password && $smtp && $port ]] &&
+		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" ||
+		Log "Mail with subject '${sbj[$1]}' could not be sent"
+	Log "$2" $1
 }
 
 # Rename upload and check type
@@ -28,15 +37,19 @@ file=${upload%.upload} name=${file##*/} key=${name%%.*} date=${name##*.} video=$
 /usr/bin/mv "$upload" "$file"
 
 type=$(file -bL --mime-type "$file")
-[[ ! ${type:0:5} = video ]] && Log "File $name is of type $type" 1
+[[ ! ${type:0:5} = video ]] && Mail 1 "File $name is of type $type"
 
 # Encode video
+start=$(date +'%Y-%m-%d at %H:%M') error=0
 ## Single pass
 #/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
 # Double pass
 /usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 1M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -f mp4 "$video" &&
 	/usr/bin/ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 1M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -f mp4 "$video" ||
-	Log "Error encoding $name" 2
+	error=1
+
+finish=$(date +'%Y-%m-%d at %H:%M')
+((error)) && Mail 2 "Error encoding $name"
 
 # Schedule cron job
 m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
@@ -46,4 +59,4 @@ D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
 line="$m $h $D $M "'*'"  $repopath/stream '$name'"
 echo -e "$(/usr/bin/crontab -l)\n$line" |/usr/bin/crontab -
 
-Log "crontab:  '$line'" 0
+Mail 0 "crontab:  '$line'"

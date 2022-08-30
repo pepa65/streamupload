@@ -1,0 +1,6 @@
+# Variables for mailer
+to=''
+user=''
+password=''
+smtp=''
+port=''
