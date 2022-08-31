@@ -1,4 +1,4 @@
-input[type=text],[type=file], select, [type=time], [type=date], [type=datetime-local] {
+input,select {
 	width:100%;
 	padding:12px 20px;
 	margin:0;

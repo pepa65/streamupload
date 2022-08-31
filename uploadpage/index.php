@@ -25,13 +25,16 @@ function respond(){
 				</td></tr>
 			<tr>
 				<td class="left">Streamkey:</td>
-				<td class="right"><input type="text" name="streamkey" id="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
+				<td class="right"><input type="text" name="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
 			<tr>
-	 	 		<td>Date and Time:</td>
-				<td><input type="datetime-local" name="datetime" id="datetime" required></td></tr>
+	 	 		<td>Date & Time:</td>
+				<td><input type="datetime-local" name="datetime" required></td></tr>
 			<tr>
 				<td>Video File:</td>
-				<td><input type="file" name="fileToUpload" id="fileToUpload" required accept=".mp4"></td></tr>
+				<td><input type="file" name="file" required accept=".mp4"></td></tr>
+			<tr>
+				<td class="left">Notify email:</td>
+				<td class="right"><input type="email" name="email" title="Not required"></td></tr>
 			<tr><td><br></td></tr>
 			<tr><td></td><td><input type="submit" value="Schedule Stream" name="submit"></td></tr>
 			<tr><td><br></td></tr>

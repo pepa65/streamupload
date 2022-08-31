@@ -14,26 +14,31 @@ upload=$(/usr/bin/ls -1tr "$dir"/*.upload 2>/dev/null |head -1)
 
 Log(){ # 1:message 2:returncode(empty: no exit) I:file
 	echo "$1">>"$log"
-	[[ $2 ]] && exit $2
+	[[ $2 ]] && exit $2 || return 0
 }
 
-Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:to,user,password,smtp,port,name,type,start,finish
+Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:email,name,type,start,finish
 	local sbj msg from="Stream Upload server"
-	source "$repopath/mailvars"
+	source "$repopath/mailvars"  # I:to,user,password,smtp,port
+	[[ $email ]] && to=$email
 	sbj[0]="Stream upload done for ${name##*@}"
 	sbj[1]="Stream upload wrong type: $type"
 	sbj[2]="Stream upload error encoding"
-	msg[0]="Heya,\n\nThe video $name started encoding on $start and finished on $finish.\n\nStream Upload server"
+	msg[0]="Heya,\n\nVideo file with tag $name\nEncoding started on $start and finished on $finish.\n\nStream Upload server"
 	msg[1]="Heya,\n\nThe file $name from $start is of type $type and could not be used.\n\nStream Upload server\n"
 	msg[2]="Heya,\n\nThe file $name started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	[[ $to && $user && $password && $smtp && $port ]] &&
-		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" ||
+		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
+		Log "Mail with subject '${sbj[$1]}' sent to $to" ||
 		Log "Mail with subject '${sbj[$1]}' could not be sent"
 	Log "$2" $1
 }
 
 # Rename upload and check type
-file=${upload%.upload} name=${file##*/} key=${name%%.*} date=${name##*.} video=$file.mp4
+file=${upload%.upload} video=$file.mp4 name=${file##*/} key=${name%%.*}
+rest=${name#*.} date=${rest:0:15} _=${rest:15} email=${_%@*}
+# If email embedded, strip the '='
+[[ $email ]] && email=${email:1}
 /usr/bin/mv "$upload" "$file"
 
 type=$(file -bL --mime-type "$file")

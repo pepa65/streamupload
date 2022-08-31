@@ -14,16 +14,20 @@ function Back($msg){
 }
 
 header('Content-type: text/html; charset=utf-8');
-$upload=htmlspecialchars(basename($_FILES['fileToUpload']['name']));
+$upload=htmlspecialchars(basename($_FILES['file']['name']));
 $key=$_POST['streamkey'];
 $datetime=$_POST['datetime'];
+$email=$_POST['email'];
+if($email){
+	$email='='.$email;
+}
 $date=substr($datetime, 0, 10);
 $hour=substr($datetime, 11, 2);
 $min=substr($datetime, 14, 2);
 $time=$hour.$min;
 $target=$_POST['target'];
 $dir='streams/';
-$name=$key.'.'.$date.'_'.$time.'@'.$target;
+$name=$key.'.'.$date.'_'.$time.$email.'@'.$target;
 $file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
@@ -44,13 +48,16 @@ $nextyear=date('Y-m-dHi', strtotime('+1 year'));
 if(strcmp($nextyear, $date.$time)<0){
 	Back('Scheduling too far into the future: '.$date.' '.$time);
 }
-if($_FILES['fileToUpload']['error']!=UPLOAD_ERR_OK){
+if($_FILES['file']['error']!=UPLOAD_ERR_OK){
 	Back('Error uploading the file');
 }
-if(!move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file)){
+if(!move_uploaded_file($_FILES['file']['tmp_name'], $file)){
 	Back('Error moving the file');
 }
 
-Back('File is now being encoded to "'.$name.'.mp4"<br>&nbsp;<br>
-Scheduling for '.$date.' at '.$hour.':'.$min.'h on '.$target);
+print('File is now being encoded to "'.$name.'.mp4"<br>&nbsp;<br>');
+if($email){
+	print('When done, an email will be sent to: '.substr($email,1));
+}
+Back('Scheduling for '.$date.' at '.$hour.':'.$min.'h on '.$target);
 ?>
