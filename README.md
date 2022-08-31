@@ -29,7 +29,7 @@ from https://caddyserver.com/download and place the `caddy` binary in
 For php functionality, install `php-fpm` (on deb-based systems:
 `apt install php-fpm`) and make the config file `/root/Caddyfile` with:
 ```
-$ipaddress:80 {
+:80 {
 	basicauth {
 		$user $hashpassword
 	}
@@ -38,17 +38,16 @@ $ipaddress:80 {
 	file_server
 }
 ```
-* Replace `$ipaddress` with the server's IP address. Alternatively, if the
-  server has an DNS A record pointing to it, `$ipaddress:80` can be replaced
-  by the domainname that the A record lists.
+* If the server IP has an DNS A record pointing to it, `:80` can be replaced
+  by the domainname with the A record.
 * Replace `$user` with the desired username for authentication.
 * Replace `$hashpassword` with the output of `caddy hash-password` which will
   ask for the password to be used for authentication.
 * Replace `$repopath` (see above in Install).
 * The value of `/run/php/php-fpm.sock` might need to be adjusted, depending
-  on the system used, it needs to be the socket for php.
+  on the system used, it needs to be the unix socket for php.
 * Caddy can be started at boottime by including `@reboot /root/Caddy` as a
-  line in root's crontab: `crontab -e` and make the file /root/Caddy` with:
+  line in root's crontab: `crontab -e` and make the file `/root/Caddy` with:
 ```
 #!/usr/bin/env bash
 
