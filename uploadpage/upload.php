@@ -19,7 +19,7 @@ $key=$_POST['streamkey'];
 $datetime=$_POST['datetime'];
 $email=$_POST['email'];
 if($email){
-	$email='='.$email;
+	$email='_'.$email;
 }
 $date=substr($datetime, 0, 10);
 $hour=substr($datetime, 11, 2);

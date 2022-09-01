@@ -4,7 +4,10 @@
 ## Install
 * Prepare a Linux server, set its timezone to the users' timezone
   (on deb-based systems: `dpkg-reconfigure tzdata`).
-* On the server, `cd` to the place where you want the files.
+* On the server, `cd` to the place where you want the files (make sure that
+  the webserver user (often `www-data`) has access to the location!).
+* Make sure the packages `git php-fpm ffmpeg` are installed (on deb-based
+  systems: `apt install git php-fpm ffmpeg`).
 * Clone repo: `git clone https://gitlab.com/pepa65/streamupload`.
 * `cd streamupload`. Now the output of `pwd` is the value for `$repopath`.
 * Copy `_mailvars` to `mailvars` and set the variables
