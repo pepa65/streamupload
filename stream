@@ -2,12 +2,12 @@
 
 # stream - Stream video when called from crontab
 # Usage:  stream <tag>
-#   The tag refers to video files in $repopath/uploadpage/streams without the
+#   The tag refers to video files in ./uploadpage/streams without the
 #   '.mp4', that should have been re-encoded by `encode`. The tag has no path
 #   information, has the "streamkey" at the start before the first dot (there
 #   has to be a dot!) and the "target" at the very end, after the last '@'.
 
-_=$(realpath -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
+_=$(readlink -f -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
 log=$repopath/process.log
 in=$repopath/uploadpage/streams/$1.mp4 key=${1%%.*} target=${1##*@}
 case $target in
@@ -17,5 +17,5 @@ RestreamSG) rtmp=rtmp://singapore.restream.io/live/$key ;;
 *) rtmp=rtmp://live.restream.io/live/$key
 esac
 
-/usr/bin/ffmpeg -re -y -i $in -c:v copy -c:a copy -f flv "$rtmp" ||
+ffmpeg -re -y -i $in -c:v copy -c:a copy -f flv "$rtmp" ||
 	echo "Error while streaming $1" >>"$log"
