@@ -17,5 +17,7 @@ RestreamSG) rtmp=rtmp://singapore.restream.io/live/$key ;;
 *) rtmp=rtmp://live.restream.io/live/$key
 esac
 
-ffmpeg -re -y -i $in -c:v copy -c:a copy -f flv "$rtmp" ||
-	echo "Error while streaming $1" >>"$log"
+set -o pipefail  # to get ffmpeg's returncode
+! ffmpeg -re -y -i $in -c:v copy -c:a copy -f flv "$rtmp" |tail -n 20 >"$in.log" &&
+	echo "Error while streaming $1" >>"$log" ||
+	rm "$in.log"  # Remove tailfile if no errors
