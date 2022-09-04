@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
-//set_time_limit(0);
+$headers=getallheaders();
+$authuser=$headers['X-User'];
 if($_SERVER['REQUEST_METHOD']!=='POST'){
 	header('Location: /');
 }
@@ -36,6 +37,7 @@ print('<!DOCTYPE html>
 <link rel="stylesheet" href="style.css">
 <div class="container">
 <h1>Encoding</h1>
+'.($authuser=="" ? "" : 'For: '.$authuser.'<br>&nbsp;<br>').'
 File: '.$upload);
 if(preg_match('/20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-6][0-9]/', $datetime)===false){
 	Back('Date/time somehow incorrect: '.$datetime);

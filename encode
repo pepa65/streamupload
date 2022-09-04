@@ -31,13 +31,12 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	if [[ $to && $user && $password && $smtp && $port ]]
 	then
 		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
-			Log "Mail with subject '${sbj[$1]}' sent to $to" ||
-			Log "Mail with subject '${sbj[$1]}' failed to send"
-		Log "-- Start encoding on $start, finished on $finish"
+			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
+			Log "== Mail with subject '${sbj[$1]}' failed to send"
+		Log "Start encoding on $start, finished on $finish"
 	else
-		Log "Mail with subject '${sbj[$1]}' could not be sent"
-		(($1==1)) && Log "-- File of type $type"
-		(($1==2)) && Log "-- Start encoding on $start, error on $finish"
+		Log "== Mail with subject '${sbj[$1]}' could not be sent"
+		(($1==2)) && Log "Start encoding on $start, error on $finish"
 	fi
 	Log "$2" $1
 }
@@ -56,14 +55,16 @@ start=$(date +'%Y-%m-%d at %H:%M:%S') error=0
 #ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
 # Double pass
 set -o pipefail  # to get ffmpeg's returncode
-ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail >"$file.1log" &&
-	ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail >"$file.2log" ||
+ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.1log" &&
+	ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.2log" ||
 	error=1
 
 # Remove logfiles
 rm "$file-*"
 finish=$(date +'%Y-%m-%d at %H:%M:%S')
 ((error)) && Mail 2 "Error encoding $name"
+# Remove tailfiles if no errors
+rm "$file".?log
 
 # Schedule cron job
 m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
@@ -72,4 +73,4 @@ crontab -l || echo -e "# m h dom mon dow  command\n" |crontab -
 line="$m $h $D $M "'*'"  $repopath/stream '$name'"
 echo -e "$(crontab -l)\n$line" |crontab -
 
-Mail 0 "crontab:  '$line'"
+Mail 0 "crontab: '$line'"
