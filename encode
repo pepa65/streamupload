@@ -18,10 +18,11 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,name,type,start,finish
-	source "$repopath/mailvars"  # I:to,user,password,smtp,port
+	source "$repopath/vars"  # I:to,user,password,smtp,port
 	local sbj msg from="Stream Upload server"
 	# Strip the '_' if email set
 	[[ $email ]] && to=${email:1}
+	[[ $port ]] || port=587
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"

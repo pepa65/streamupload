@@ -10,7 +10,7 @@
   systems: `apt install git php-fpm ffmpeg`).
 * Clone repo: `git clone https://gitlab.com/pepa65/streamupload`.
 * `cd streamupload`. Now the output of `pwd` is the value for `$repopath`.
-* Copy `_mailvars` to `mailvars` and set the variables
+* Copy `_vars` to `vars` and set the variables
   `to`, `user`, `password`, `smtp` and `port` in it in order to
   receive mail notifications when the encodes are finished.
 * Make a crontab-entry: "* * * * *  $repopath/encode" (replace `$repopath`!).

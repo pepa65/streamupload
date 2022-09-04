@@ -1,0 +1,23 @@
+## Variables for the install script
+# All have to be filled in, except if they have a default
+
+# Interface for serving the page: ':80' or 'domain.name'
+# Defaults to ':80'
+interface=''
+
+# Timezone for local user
+tz='UTC'
+
+# Usersnames/passwords (multiple pairs allowed)
+# Defaults to none (no authentication required)
+declare -A userpw
+userpw['password1']='xxxxxxxxxx'
+
+# Variables for mailer
+to='(recipient of notifications)'
+user='(smtp login)'
+password='(smtp password)'
+# Defaults to 'mail.gmail.com'
+smtp=''
+# Defaults to: '587'
+port=''
