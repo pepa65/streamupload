@@ -32,7 +32,15 @@ function respond(){
 			<tr>
 				<td>Video File:</td>
 				<td><input type="file" name="file" required accept=".mp4"></td></tr>
-			<tr>
+<?php
+$headers=getallheaders();
+$authuser=$headers['X-User'];
+if($authuser!==''){
+	print('			<tr>
+				<td class="left">User:</td>
+				<td class="right"><b>'.$authuser.'</b></td></tr>
+			<tr>');
+?>
 				<td class="left">Notify email:</td>
 				<td class="right"><input type="email" name="email" title="Not required"></td></tr>
 			<tr><td><br></td></tr>
