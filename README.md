@@ -2,6 +2,8 @@
 **Upload videos to be re-encoded and scheduled for streaming**
 
 ## Install
+
+### Manual
 * Prepare a Linux server, set its timezone to the users' timezone
   (on deb-based systems: `dpkg-reconfigure tzdata`).
 * On the server, `cd` to the place where you want the files (make sure that
@@ -16,7 +18,7 @@
 * Make a crontab-entry: "* * * * *  $repopath/encode" (replace `$repopath`!).
 * Install the `mailer` binary by downloading it from the repo at
   https://https://github.com/pepa65/mailer/releases/latest and moving it to
-  `/usr/bin` and make it executable: `chmod +x /usr/bin/mailer`.
+  `/usr/local/bin` and make it executable: `chmod +x /usr/local/bin/mailer`.
   If it's not installed, everything except the email will still work.
 * Run a php/webserver on `$repopath/uploadpage`:
   - Get it to restart on reboot.
@@ -25,7 +27,7 @@
     * `post_max_size` - Upper limit of uploaded video sizes, say `10G`.
     * `upload_max_filesize` - same value as `post_max_size`.
 
-### Webserver
+#### Webserver
 If no webserver has been installed, an easy way to get going is to use Caddy
 from https://caddyserver.com/download and place the `caddy` binary in
 `/usr/local/bin` and make it executable: `chmod +x /usr/local/bin/caddy`.
@@ -53,6 +55,13 @@ For php functionality, install `php-fpm` (on deb-based systems:
   line in root's crontab: `crontab -e` and make the file `/root/Caddy` with:
 ```
 #!/usr/bin/env bash
+
+### Docker
+After cloning this repo and `cd streamupload`, a docker image can be built
+from the included `Dockerfile` by: `docker build -t streamupload .`.
+In the case of running on a LAN and not having a DNS A record, start it with:
+`docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
+In case of a domainname, replace `8080:80` by `443:443`.
 
 # Make sure internet is reachable
 while ! /usr/bin/ping -q -c 1 1.1.1.1 &>/dev/null

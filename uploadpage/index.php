@@ -11,45 +11,48 @@ function respond(){
 </script>
 <div class="container">
 	<div class="incontainer">
-	<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 		<table>
-			<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
 <?php
 $headers=getallheaders();
 $authuser=$headers['X-User'];
 if($authuser!==''){
-	print('			<tr>
-				<td class="left">User:</td>
-				<td class="right"><center><b>'.$authuser.'</b></center></td></tr>
-			<tr>');
+	print('
+			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser@'.$_SERVER['HTTP_HOST'].'">
+				<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
+				<tr>
+					<td class="left">User:</td>
+					<td class="right"><b>'.$authuser.'</b></td>
+					<td><input class="shiftleft" type="submit" value="Logoff"></td></tr>
+			</form>');
 }
 ?>
-			<tr><td><br></td></tr>
-			<tr>
-				<td>Target:</td>
-				<td>
-					<select name="target" id="target" required>
-						<option value="Restream">Restream</option>
-						<option value="Facebook">Facebook</option>
-						<option value="YouTube">YouTube</option>
-					</select>
-				</td></tr>
-			<tr>
-				<td class="left">Streamkey:</td>
-				<td class="right"><input type="text" name="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
-			<tr>
-	 	 		<td>Date & Time:</td>
-				<td><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
-			<tr>
-				<td>Video File:</td>
-				<td><input type="file" name="file" required accept=".mp4"></td></tr>
-				<td class="left">Notify email:</td>
-				<td class="right"><input type="email" name="email" title="Not required"></td></tr>
-			<tr><td><br></td></tr>
-			<tr><td></td><td><input type="submit" value="Schedule Stream" name="submit"></td></tr>
-			<tr><td><br></td></tr>
-			<tr><td align=center colspan="2" id="response"></td></tr>
+			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
+				<tr>
+					<td>Target:</td>
+					<td>
+						<select name="target" id="target" required>
+							<option value="Restream">Restream</option>
+							<option value="Facebook">Facebook</option>
+							<option value="YouTube">YouTube</option>
+						</select>
+					</td></tr>
+				<tr>
+					<td class="left">Streamkey:</td>
+					<td class="right"><input type="text" name="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
+				<tr>
+					<td>Date & Time:</td>
+					<td><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
+				<tr>
+					<td>Video File:</td>
+					<td><input type="file" name="file" required accept=".mp4"></td></tr>
+				<tr>
+					<td class="left">Notify email:</td>
+					<td class="right"><input type="email" name="email" title="Not required"></td></tr>
+				<tr><td><br></td></tr>
+				<tr><td></td><td><input type="submit" value="Schedule Stream" name="submit"></td></tr>
+				<tr><td><br></td></tr>
+				<tr><td align=center colspan="2" id="response"></td></tr>
+			</form>
 		</table>
-	</form>
-</div>
+	</div>
 </div>

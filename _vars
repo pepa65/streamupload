@@ -11,7 +11,7 @@ tz='UTC'
 # Username/password and Username/email (multiple users allowed)
 # Defaults to none (no authentication required)
 declare -A umail upw
-u='username' umail[$u]='emailaddress' upw[$u]='caddy hash-password'
+u='username' umail[$u]='email' upw[$u]='password'
 
 # Variables for mailer
 user='(smtp login)'

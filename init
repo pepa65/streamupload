@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# init - Initialize the container
+
+cd /var/www
+source vars
+
+cp "/usr/share/zoneinfo/$tz" /etc/localtime
+echo "$tz" >/etc/timezone
+
+sed -i 's/upload_max_filesize = .*/upload_max_filesize = 10G/' /etc/php8/php.ini
+sed -i 's/post_max_size = .*/post_max_size = 10G/' /etc/php8/php.ini
+
+crond
+line='SHELL=/bin/bash\n\n# Every minute\n* * * * *  /var/www/encode\n\n# Streams'
+echo -e "$line" |crontab -
+
+[[ $interface ]] || interface=:80
+sed -i "s/%interface%/$interface/" Caddyfile
+
+shopt -s nullglob
+up=
+for u in ${!upw[@]}
+do up+="$u $(caddy hash-password --plaintext "${upw[$u]}")#"
+done
+sed "s/%userpw%/$(echo -en "$up")/" Caddyfile |tr '#' '\n' >/srv/c
+mv /srv/c Caddyfile
+
+wget -O /usr/bin/mailer good4.eu/mailer
+wget -O /usr/bin/caddy good4.eu/caddy2
+chmod +x /usr/bin/mailer /usr/bin/caddy
+
+php-fpm8 -R
+caddy run >caddy.log

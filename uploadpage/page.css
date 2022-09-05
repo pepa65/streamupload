@@ -48,3 +48,7 @@ table {
 .right {
 	width:325px;
 }
+.shiftleft {
+	position:relative;
+	left:-95px;
+}

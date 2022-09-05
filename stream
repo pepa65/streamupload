@@ -6,6 +6,7 @@
 #   '.mp4', that should have been re-encoded by `encode`. The tag has no path
 #   information, has the "streamkey" at the start before the first dot (there
 #   has to be a dot!) and the "target" at the very end, after the last '@'.
+# Required: ffmpeg coreutils(tail rm)
 
 _=$(readlink -f -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
 log=$repopath/process.log

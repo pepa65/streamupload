@@ -3,6 +3,8 @@
 # encode - Encode for streaming and schedule cron job
 # Usage:  encode
 #   Called by cron every minute; process oldest .upload file in ./uploadpage/streams)
+# Required: file coreutils(readlink ls head mv tail rm) cron(crontab) date ffmpeg
+#   mailer[gitlab.com/pepa65/mailer]
 
 # Check for oldest uploaded file
 _=$(readlink -f -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
