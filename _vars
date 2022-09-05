@@ -8,13 +8,12 @@ interface=''
 # Timezone for local user
 tz='UTC'
 
-# Usersnames/passwords (multiple pairs allowed)
+# Username/password and Username/email (multiple users allowed)
 # Defaults to none (no authentication required)
-declare -A userpw
-userpw['password1']='xxxxxxxxxx'
+declare -A umail upw
+u='username' umail[$u]='emailaddress' upw[$u]='caddy hash-password'
 
 # Variables for mailer
-to='(recipient of notifications)'
 user='(smtp login)'
 password='(smtp password)'
 # Defaults to 'mail.gmail.com'

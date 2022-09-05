@@ -7,7 +7,7 @@ if($_SERVER['REQUEST_METHOD']!=='POST'){
 }
 
 function Back($msg){
-	print('<br>&nbsp;<br>'.$msg.'<br>&nbsp;<br>
+	print('<p>'.$msg.'</p>
 <form action="/" method="post">
 <input type="submit" value="Upload another file" name="submit">
 </form></div>');
@@ -21,6 +21,8 @@ $datetime=$_POST['datetime'];
 $email=$_POST['email'];
 if($email){
 	$email='_'.$email;
+} else {
+	$email='_'.$authuser;
 }
 $date=substr($datetime, 0, 10);
 $hour=substr($datetime, 11, 2);
@@ -34,11 +36,11 @@ print('<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Encoding</title>
 <link rel="icon" href="favicon.png">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="page.css">
 <div class="container">
 <h1>Encoding</h1>
-'.($authuser=="" ? "" : 'For: '.$authuser.'<br>&nbsp;<br>').'
-File: '.$upload);
+'.($authuser==='' ? '' : '<p>For: <b>'.$authuser.'</b></p>').'
+<p>File: <b>'.$upload.'</b></p>');
 if(preg_match('/20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-6][0-9]/', $datetime)===false){
 	Back('Date/time somehow incorrect: '.$datetime);
 }
@@ -57,9 +59,9 @@ if(!move_uploaded_file($_FILES['file']['tmp_name'], $file)){
 	Back('Error moving the file');
 }
 
-print('File is now being encoded to "'.$name.'.mp4"<br>&nbsp;<br>');
+print('<p>File is now being encoded to <b>'.$name.'.mp4</b></p>');
 if($email){
-	print('When done, an email will be sent to: '.substr($email,1));
+	print('<p>When done, an email will be sent to <b>'.substr($email,1).'</b></p>');
 }
-Back('Scheduling for '.$date.' at '.$hour.':'.$min.'h on '.$target);
+Back('Scheduling for <b>'.$date.'</b> at <b>'.$hour.':'.$min.'</b>h on <b>'.$target.'</b>');
 ?>

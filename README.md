@@ -16,7 +16,7 @@
 * Make a crontab-entry: "* * * * *  $repopath/encode" (replace `$repopath`!).
 * Install the `mailer` binary by downloading it from the repo at
   https://https://github.com/pepa65/mailer/releases/latest and moving it to
-  `/usr/local/bin` and make it executable: `chmod +x /usr/local/bin/mailer`.
+  `/usr/bin` and make it executable: `chmod +x /usr/bin/mailer`.
   If it's not installed, everything except the email will still work.
 * Run a php/webserver on `$repopath/uploadpage`:
   - Get it to restart on reboot.
@@ -65,6 +65,7 @@ sleep 1
 /usr/bin/killall -9 caddy &>/dev/null
 /usr/local/bin/caddy start &>/root/caddy.log
 ```
+  and make it executable: `chmod +x /root/Caddy`.
 
 ## Usage
 * Get a streamkey for the target by scheduling a stream

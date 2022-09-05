@@ -18,17 +18,17 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,name,type,start,finish
-	source "$repopath/vars"  # I:to,user,password,smtp,port
+	source "$repopath/vars"  # I:umail,user,password,smtp,port
 	local sbj msg from="Stream Upload server"
-	# Strip the '_' if email set
-	[[ $email ]] && to=${email:1}
+	# If proper email set, use it, otherwise it's the authusername: look up email
+	[[ $email = *@* ]] && to=$email || to=${umail[$email]}
 	[[ $port ]] || port=587
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"
-	msg[0]="Heya,\n\nVideo file with tag $name\nEncoding started on $start and finished on $finish.\n\nStream Upload server"
-	msg[1]="Heya,\n\nThe file $name from $start is of type $type and could not be used.\n\nStream Upload server\n"
-	msg[2]="Heya,\n\nThe file $name started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
+	msg[0]="Heya,\n\nEncoded video with tag '$name'.\nEncoding started on $start and finished on $finish.\n\nStream Upload server"
+	msg[1]="Heya,\n\nThe file '$name' from $start is of type '$type' and could not be used.\n\nStream Upload server\n"
+	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
 	then
 		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
@@ -47,6 +47,9 @@ file=${upload%.upload} video=$file.mp4 name=${file##*/} key=${name%%.*}
 rest=${name#*.} date=${rest:0:15} _=${rest:15} email=${_%@*}
 mv "$upload" "$file"
 
+# Strip the '_' if email set
+[[ $email ]] && email=${email:1}
+
 type=$(file -bL --mime-type "$file")
 [[ ! ${type:0:5} = video ]] && Mail 1 "File $name is of type $type"
 
@@ -61,7 +64,7 @@ ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -buf
 	error=1
 
 # Remove logfiles
-rm "$file-*"
+rm "$file"-*
 finish=$(date +'%Y-%m-%d at %H:%M:%S')
 ((error)) && Mail 2 "Error encoding $name"
 # Remove tailfiles if no errors
