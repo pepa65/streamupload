@@ -73,7 +73,7 @@ rm "$file".?log
 # Schedule cron job
 m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
 D=${date:8:2} D=${D#0} M=${date:5:2} M=${M#0}
-crontab -l || echo -e "# m h dom mon dow  command\n" |crontab -
+crontab -l >/dev/null || echo -e "# m h dom mon dow  command\n" |crontab -
 line="$m $h $D $M "'*'"  $repopath/stream '$name'"
 echo -e "$(crontab -l)\n$line" |crontab -
 
