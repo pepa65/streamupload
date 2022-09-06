@@ -25,8 +25,8 @@ if($authuser!==''){
 					<td><input class="shiftleft" type="submit" value="Logoff"></td></tr>
 			</form>');
 }
+			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].'upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">');
 ?>
-			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 				<tr>
 					<td>Target:</td>
 					<td>
