@@ -17,7 +17,7 @@ $headers=getallheaders();
 $authuser=$headers['X-User'];
 if($authuser!==''){
 	print('
-			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser@'.$_SERVER['HTTP_HOST'].'">
+			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser@'.$_SERVER['HTTP_HOST'].'" method="post">
 				<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
 				<tr>
 					<td class="left">User:</td>

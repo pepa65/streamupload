@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
+set -e
 # init - Initialize the container
 
 cd /var/www
@@ -18,17 +18,16 @@ echo -e "$line" |crontab -
 [[ $interface ]] || interface=:80
 sed -i "s/%interface%/$interface/" Caddyfile
 
-shopt -s nullglob
+chmod +x /usr/bin/caddy /usr/bin/mailer
 up=
-for u in ${!upw[@]}
-do up+="$u $(caddy hash-password --plaintext "${upw[$u]}")#"
+shopt -s nullglob
+for u in "${!upw[@]}"
+do up+="\t\t$u $(caddy hash-password --plaintext "${upw["$u"]}")#"
 done
 sed "s/%userpw%/$(echo -en "$up")/" Caddyfile |tr '#' '\n' >/srv/c
 mv /srv/c Caddyfile
 
-wget -O /usr/bin/mailer good4.eu/mailer
-wget -O /usr/bin/caddy good4.eu/caddy2
-chmod +x /usr/bin/mailer /usr/bin/caddy
-
 php-fpm8 -R
-caddy run >caddy.log
+caddy start >caddy.log
+
+sleep 9999d
