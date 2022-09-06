@@ -8,7 +8,7 @@ if($_SERVER['REQUEST_METHOD']!=='POST'){
 
 function Back($msg){
 	print('<p>'.$msg.'</p>
-<form action="/" method="post">
+<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].'" method="post">
 <input type="submit" value="Upload another file" name="submit">
 </form></div>');
 	exit;

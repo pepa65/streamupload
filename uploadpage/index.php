@@ -17,7 +17,7 @@ $headers=getallheaders();
 $authuser=$headers['X-User'];
 if($authuser!==''){
 	print('
-			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser@'.$_SERVER['HTTP_HOST'].'" method="post">
+			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser:wrongpw@'.$_SERVER['HTTP_HOST'].'" method="post">
 				<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
 				<tr>
 					<td class="left">User:</td>
@@ -26,7 +26,7 @@ if($authuser!==''){
 			</form>');
 }
 ?>
-			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
+			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 				<tr>
 					<td>Target:</td>
 					<td>

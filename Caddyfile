@@ -1,5 +1,5 @@
 %interface% {
-	basicauth {
+	basicauth / {
 %userpw%	}
 	log {
 		output file /var/www/upload.log
