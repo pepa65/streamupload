@@ -2,7 +2,7 @@
 	basicauth / {
 %userpw%	}
 	log {
-		output file /var/www/upload.log
+		output file /var/www/web.log
 		format console
 	}
 	php_fastcgi 127.0.0.1:9000
