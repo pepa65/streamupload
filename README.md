@@ -56,13 +56,6 @@ For php functionality, install `php-fpm` (on deb-based systems:
 ```
 #!/usr/bin/env bash
 
-### Docker
-After cloning this repo and `cd streamupload`, a docker image can be built
-from the included `Dockerfile` by: `docker build -t streamupload .`.
-In the case of running on a LAN and not having a DNS A record, start it with:
-`docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
-In case of a domainname, replace `8080:80` by `443:443`.
-
 # Make sure internet is reachable
 while ! /usr/bin/ping -q -c 1 1.1.1.1 &>/dev/null
 do sleep 1
@@ -75,6 +68,13 @@ sleep 1
 /usr/local/bin/caddy start &>/root/caddy.log
 ```
   and make it executable: `chmod +x /root/Caddy`.
+
+### Docker
+After cloning this repo and `cd streamupload`, a docker image can be built
+from the included `Dockerfile` by: `docker build -t streamupload .`.
+In the case of running on a LAN and not having a DNS A record, start it with:
+`docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
+In case of a domainname, replace `8080:80` by `443:443`.
 
 ## Usage
 * Get a streamkey for the target by scheduling a stream
