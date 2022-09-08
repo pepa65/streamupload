@@ -8,10 +8,11 @@ interface=''
 # Timezone for local user
 tz='UTC'
 
-# Username/email/password (multiple users allowed)
-# Must have at least one Username/password
-declare -A umail upw
+# Username / Email / Password/Hash (multiple users allowed)
+# Must have at least one Username and Email with either Password or Hash
+declare -A umail upw uhash
 u='username' umail[$u]='email' upw[$u]='password'
+u='username' umail[$u]='email' uhash[$u]='$(caddy hash-password)'
 
 # Variables for mailer
 user='(smtp login)'
