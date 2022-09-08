@@ -38,16 +38,21 @@ For php functionality, install `php-fpm` (on deb-based systems:
 	basicauth {
 		$user $hashpassword
 	}
+	log {
+		output file /var/www/web.log
+	}
 	php_fastcgi unix//run/php/php-fpm.sock
+	request_header +X-User {http.auth.user.id}
 	root * $repopath/uploadpage
 	file_server
 }
 ```
 * If the server IP has an DNS A record pointing to it, `:80` can be replaced
   by the domainname with the A record.
-* Replace `$user` with the desired username for authentication.
-* Replace `$hashpassword` with the output of `caddy hash-password` which will
-  ask for the password to be used for authentication.
+* Replace `$user` with the desired username for authentication and replace
+  `$hashpassword` with the output of `caddy hash-password` which will
+  ask for the password to be used for authentication. Multiple users (on
+  separate lines) are allowed.
 * Replace `$repopath` (see above in Install).
 * The value of `/run/php/php-fpm.sock` might need to be adjusted, depending
   on the system used, it needs to be the unix socket for php.
@@ -55,13 +60,6 @@ For php functionality, install `php-fpm` (on deb-based systems:
   line in root's crontab: `crontab -e` and make the file `/root/Caddy` with:
 ```
 #!/usr/bin/env bash
-
-### Docker
-After cloning this repo and `cd streamupload`, a docker image can be built
-from the included `Dockerfile` by: `docker build -t streamupload .`.
-In the case of running on a LAN and not having a DNS A record, start it with:
-`docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
-In case of a domainname, replace `8080:80` by `443:443`.
 
 # Make sure internet is reachable
 while ! /usr/bin/ping -q -c 1 1.1.1.1 &>/dev/null
@@ -75,6 +73,13 @@ sleep 1
 /usr/local/bin/caddy start &>/root/caddy.log
 ```
   and make it executable: `chmod +x /root/Caddy`.
+
+### Docker
+After cloning this repo and `cd streamupload`, a docker image can be built
+from the included `Dockerfile` by: `docker build -t streamupload .`.
+In the case of running on a LAN and not having a DNS A record, start it with:
+`docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
+In case of a domainname, replace `8080:80` by `443:443`.
 
 ## Usage
 * Get a streamkey for the target by scheduling a stream
