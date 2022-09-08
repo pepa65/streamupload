@@ -1,8 +1,8 @@
 # Build image: 
 #   docker build -t streamupload .
 # Run container, one of:
-#   docker run -d --name stream -p 8080:80 -v uploadpage:/var/www/uploadpage streamupload
-#   docker run -d --name stream -p 443:443 -v uploadpage:/var/www/uploadpage streamupload
+#   docker run -d --name stream -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload
+#   docker run -d --name stream -p 443:443 -v $PWD/uploadpage:/var/www/uploadpage streamupload
 # Access shell in container:
 #   docker exec -ti stream /bin/bash
 # Destroy container and image:

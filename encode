@@ -69,8 +69,9 @@ ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -buf
 rm "$file"-*
 finish=$(date +'%Y-%m-%d at %H:%M:%S')
 ((error)) && Mail 2 "Error encoding $name"
-# Remove tailfiles if no errors
-rm "$file".?log
+
+# Remove tailfiles and upload if no errors
+rm -- "$file".?log "$file"
 
 # Schedule cron job
 m=${date:13:2} m=${m#0} h=${date:11:2} h=${h#0}
