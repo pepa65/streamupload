@@ -22,7 +22,9 @@ chmod +x /usr/bin/caddy /usr/bin/mailer
 up=
 shopt -s nullglob
 for u in "${!upw[@]}"
-do up+="\t\t$u $(caddy hash-password --plaintext "${upw["$u"]}")#"
+do hash=${uhash[$u]}
+	[[ $hash ]] || hash=$(caddy hash-password --plaintext "${upw["$u"]}")
+	up+="\t\t$u $hash#"
 done
 sed "s/%userpw%/$(echo -en "$up")/" Caddyfile |tr '#' '\n' >/srv/c
 mv /srv/c Caddyfile

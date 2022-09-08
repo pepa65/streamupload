@@ -8,8 +8,8 @@ interface=''
 # Timezone for local user
 tz='UTC'
 
-# Username/password and Username/email (multiple users allowed)
-# Defaults to none (no authentication required)
+# Username/email/password (multiple users allowed)
+# Must have at least one Username/password
 declare -A umail upw
 u='username' umail[$u]='email' upw[$u]='password'
 
