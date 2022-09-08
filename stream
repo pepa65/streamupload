@@ -18,7 +18,8 @@ RestreamSG) rtmp=rtmp://singapore.restream.io/live/$key ;;
 *) rtmp=rtmp://live.restream.io/live/$key
 esac
 
+# Stream, log it, and remove all files if successful
 set -o pipefail  # to get ffmpeg's returncode
 ffmpeg -re -y -i "$in" -c:v copy -c:a copy -f flv "$rtmp" |tail -n 20 >"$in.log" &&
-	rm "$in.log" "$in" ||
+	rm "$in.log" "$in" "${in%.mp4}" ||
 	echo "Error while streaming $1" >>"$log"
