@@ -38,16 +38,21 @@ For php functionality, install `php-fpm` (on deb-based systems:
 	basicauth {
 		$user $hashpassword
 	}
+	log {
+		output file /var/www/web.log
+	}
 	php_fastcgi unix//run/php/php-fpm.sock
+	request_header +X-User {http.auth.user.id}
 	root * $repopath/uploadpage
 	file_server
 }
 ```
 * If the server IP has an DNS A record pointing to it, `:80` can be replaced
   by the domainname with the A record.
-* Replace `$user` with the desired username for authentication.
-* Replace `$hashpassword` with the output of `caddy hash-password` which will
-  ask for the password to be used for authentication.
+* Replace `$user` with the desired username for authentication and replace
+  `$hashpassword` with the output of `caddy hash-password` which will
+  ask for the password to be used for authentication. Multiple users (on
+  separate lines) are allowed.
 * Replace `$repopath` (see above in Install).
 * The value of `/run/php/php-fpm.sock` might need to be adjusted, depending
   on the system used, it needs to be the unix socket for php.
