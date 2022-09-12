@@ -6,23 +6,23 @@
 ### Manual
 * Prepare a Linux server, set its timezone to the users' timezone
   (on deb-based systems: `dpkg-reconfigure tzdata`).
-* On the server, `cd` to the place where you want the files (make sure that
   the webserver user (often `www-data`) has access to the location!).
 * Make sure the packages `git php-fpm ffmpeg` are installed (on deb-based
   systems: `apt install git php-fpm ffmpeg`).
 * Clone repo: `git clone https://gitlab.com/pepa65/streamupload`.
-* `cd streamupload`. Now the output of `pwd` is the value for `$repopath`.
-* Copy `_vars` to `vars` and set the variables
-  `to`, `user`, `password`, `smtp` and `port` in it in order to
-  receive mail notifications when the encodes are finished.
+* Move the `streamupload` directory to a place that is accessible to the web
+  server, like: `mv streamupload /var/www` and `cd` to that place. Now the
+  output of `pwd` is the value for `$repopath`.
+* Copy `_vars` to `vars` and `_mailhash` to `mailhash` and set the variables
+  in `vars` (webserver, SMTP-server) and `mailhash` (usernames, emails and
+  bcrypt-password-hashes).
 * Make a crontab-entry: "* * * * *  $repopath/encode" (replace `$repopath`!).
 * Install the `mailer` binary by downloading it from the repo at
   https://https://github.com/pepa65/mailer/releases/latest and moving it to
   `/usr/local/bin` and make it executable: `chmod +x /usr/local/bin/mailer`.
-  If it's not installed, everything except the email will still work.
+  If it's not installed, everything (except the emails) will still work.
 * Run a php/webserver on `$repopath/uploadpage`:
   - Get it to restart on reboot.
-  - Setting up basicauth on the page is a good idea if others can get access!
   - Change the relevant `php.ini` to allow large file uploads:
     * `post_max_size` - Upper limit of uploaded video sizes, say `10G`.
     * `upload_max_filesize` - same value as `post_max_size`.
@@ -31,32 +31,29 @@
 If no webserver has been installed, an easy way to get going is to use Caddy
 from https://caddyserver.com/download and place the `caddy` binary in
 `/usr/local/bin` and make it executable: `chmod +x /usr/local/bin/caddy`.
-For php functionality, install `php-fpm` (on deb-based systems:
-`apt install php-fpm`) and make the config file `/root/Caddyfile` with:
+Make the config file `/root/Caddyfile` like:
 ```
+{
+	email $email
+}
+
 :80 {
-	basicauth {
-		$user $hashpassword
-	}
 	log {
-		output file /var/www/web.log
+		output file $weblogfile
 	}
 	php_fastcgi unix//run/php/php-fpm.sock
-	request_header +X-User {http.auth.user.id}
 	root * $repopath/uploadpage
 	file_server
 }
 ```
 * If the server IP has an DNS A record pointing to it, `:80` can be replaced
-  by the domainname with the A record.
-* Replace `$user` with the desired username for authentication and replace
-  `$hashpassword` with the output of `caddy hash-password` which will
-  ask for the password to be used for authentication. Multiple users (on
-  separate lines) are allowed.
+  by the domainname with the A record, and it will be SSL-encrypted.
+* Replace `$email` with an email for the SSL-certificates.
+* Replace `$weblogfile` with a path for a webserver logfile.
 * Replace `$repopath` (see above in Install).
 * The value of `/run/php/php-fpm.sock` might need to be adjusted, depending
   on the system used, it needs to be the unix socket for php.
-* Caddy can be started at boottime by including `@reboot /root/Caddy` as a
+* Caddy can be started at boottime by including `@reboot  /root/Caddy` as a
   line in root's crontab: `crontab -e` and make the file `/root/Caddy` with:
 ```
 #!/usr/bin/env bash
@@ -75,15 +72,17 @@ sleep 1
   and make it executable: `chmod +x /root/Caddy`.
 
 ### Docker
-After cloning this repo and `cd streamupload`, a docker image can be built
-from the included `Dockerfile` by: `docker build -t streamupload .`.
-In the case of running on a LAN and not having a DNS A record, start it with:
+After cloning this repo, `cd streamupload`, and setting the variables in `vars` and
+`mailhash`, a docker image can be built from the included `Dockerfile` by:
+`docker build -t streamupload .`. In the case of running on a LAN and not having a
+DNS A record, start it with:
 `docker run -d -p 8080:80 -v $PWD/uploadpage:/var/www/uploadpage streamupload`.
 In case of a domainname, replace `8080:80` by `443:443`.
 
 ## Usage
 * Get a streamkey for the target by scheduling a stream
   (supported are: Restream.io, YouTube.com, Facebook.com).
-* Go to the server's IP address in the browser: `http://$ipaddress` or to the
+* Go to the server's URL in the browser: `http://$ipaddress:8080` or to the
   domainname if available: `https://$domainname`.
+* Log in with the username and passwors as prepared in `mailhash`.
 * Fill in the form, and click "Schedule Stream".

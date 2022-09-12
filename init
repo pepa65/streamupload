@@ -15,21 +15,14 @@ crond
 line='SHELL=/bin/bash\n\n# Every minute\n* * * * *  /var/www/encode\n\n# Streams'
 echo -e "$line" |crontab -
 
+sed -i "s/%sslmail%/$sslmail/" /root/Caddyfile
+
 [[ $interface ]] || interface=:80
-sed -i "s/%interface%/$interface/" Caddyfile
+sed -i "s/%interface%/$interface/" /root/Caddyfile
 
 chmod +x /usr/bin/caddy /usr/bin/mailer
-up=
-shopt -s nullglob
-for u in "${!upw[@]}"
-do hash=${uhash[$u]}
-	[[ $hash ]] || hash=$(caddy hash-password --plaintext "${upw["$u"]}")
-	up+="\t\t$u $hash#"
-done
-sed "s/%userpw%/$(echo -en "$up")/" Caddyfile |tr '#' '\n' >/srv/c
-mv /srv/c Caddyfile
 
 php-fpm8 -R
-caddy start >caddy.log
+caddy start --config /root/Caddyfile --adapter caddyfile >caddy.log
 
 sleep 9999d

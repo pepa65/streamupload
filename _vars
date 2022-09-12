@@ -1,18 +1,15 @@
 ## Variables for the install script
 # All have to be filled in, except if they have a default
 
+# Timezone for local user
+tz='Asia/Bangkok'
+
 # Interface for serving the page: ':80' or 'domain.name'
 # Defaults to ':80'
 interface=''
 
-# Timezone for local user
-tz='UTC'
-
-# Username / Email / Password/Hash (multiple users allowed)
-# Must have at least one Username and Email with either Password or Hash
-declare -A umail upw uhash
-u='username' umail[$u]='email' upw[$u]='password'
-u='username' umail[$u]='email' uhash[$u]='$(caddy hash-password)'
+# Email for registering SSL-certificate
+sslmail='(valid email)'
 
 # Variables for mailer
 user='(smtp login)'
