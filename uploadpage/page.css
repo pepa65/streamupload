@@ -33,17 +33,29 @@ body {
 	height:100vh;
 }
 .incontainer {
-	width:450px;
+	width:525px;
 	max-width:450px;
 }
 p {
 	flex-wrap:nowrap;
 }
+h4 {
+	text-align:center;
+	color:red;
+	background-color:light-red;
+	padding:.7em;
+}
 table {
 	width:100%;
 }
+.single {
+	margin:auto;
+	width:325px;
+}
 .left {
-	width:125px;
+	width:200px;
+	padding-right:10px;
+	text-align:right;
 }
 .right {
 	width:325px;

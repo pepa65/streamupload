@@ -27,6 +27,7 @@ function respond(){
 					<td>Target:</td>
 					<td>
 						<select name="target" id="target" required>
+							<option value="" disabled selected hidden>Streaming Destination</option>
 							<option value="Restream">Restream</option>
 							<option value="Facebook">Facebook</option>
 							<option value="YouTube">YouTube</option>
@@ -39,13 +40,13 @@ function respond(){
 					<td>Date & Time:</td>
 					<td><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
 				<tr>
-					<td>Video File:</td>
-					<td><input type="file" name="file" required accept=".mp4"></td></tr>
+					<td class="left">Video File:</td>
+					<td class="right"><input type="file" name="file" required accept=".mp4"></td></tr>
 				<tr>
 					<td class="left">Notify email:</td>
 					<td class="right"><input type="email" name="email" title="Not required"></td></tr>
 				<tr><td><br></td></tr>
-				<tr><td></td><td><input type="submit" value="Schedule Stream" name="schedule"></td></tr>
+				<tr><td></td><td class="right"><input type="submit" value="Schedule Stream" name="schedule"></td></tr>
 				<tr><td><br></td></tr>
 				<tr><td align=center colspan="2" id="response"></td></tr>
 			</form>
