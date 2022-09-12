@@ -19,17 +19,16 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 	[[ $2 ]] && exit $2 || return 0
 }
 
-Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,name,type,start,finish
+Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,username,name,type,start,finish
 	source "$repopath/vars"  # I:user,password,smtp,port
-	local sbj msg from="Stream Upload server"
-	declare -A mails
+	local sbj msg to from="Stream Upload server"
 	mapfile -t <"$repopath/mailhash"
 	for line in "${MAPFILE[@]}"
 	do [[ ${line:0:1} = '#' ]] && continue
-		l=${line%$'\t'*} mails[${l%$'\t'*}]=${l#*$'\t'}
+		[[ $username = ${line%%$'\t'*} ]] && _=${line#*$'\t'} to=${_%$'\t'*} && break
 	done
-	# If proper email set, strip ':', otherwise it's the user: look up email
-	[[ $email ]] && to=${email:1} || to=${mails[$email]}
+	# If email given, strip ':'
+	[[ $email ]] && to=${email:1}
 	[[ $port ]] || port=587
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
@@ -41,7 +40,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	then # All ingredients for a mail present
 		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
 			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
-			Log "== Mail with subject '${sbj[$1]}' failed to send"
+			Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
 		Log "Start encoding on $start, finished on $finish"
 	else # Can't send
 		Log "== Mail with subject '${sbj[$1]}' could not be sent"
@@ -52,7 +51,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 
 # Rename upload and check type
 file=${upload%.upload} video=$file.mp4 name=${file##*/} key=${name%%.*}
-rest=${name#*.} date=${rest:0:15} _=${rest:16} username=${_%%:*} _=${_%@*} email=${_#${username}}
+rest=${name#*.} date=${rest:0:15} _=${rest:16} _=${_%@*} username=${_%%:*} email=${_#$username}
 mv "$upload" "$file"
 
 type=$(file -bL --mime-type "$file")
