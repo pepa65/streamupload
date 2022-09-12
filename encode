@@ -20,10 +20,16 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,name,type,start,finish
-	source "$repopath/vars"  # I:umail,user,password,smtp,port
+	source "$repopath/vars"  # I:user,password,smtp,port
 	local sbj msg from="Stream Upload server"
-	# If proper email set, use it, otherwise it's the authusername: look up email
-	[[ $email = *@* ]] && to=$email || to=${umail[$email]}
+	declare -A mails
+	mapfile -t <"$repopath/mailhash"
+	for line in "${MAPFILE[@]}"
+	do [[ ${line:0:1} = '#' ]] && continue
+		l=${line%$'\t'*} mails[${l%$'\t'*}]=${l#*$'\t'}
+	done
+	# If proper email set, strip ':', otherwise it's the user: look up email
+	[[ $email ]] && to=${email:1} || to=${mails[$email]}
 	[[ $port ]] || port=587
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
@@ -32,12 +38,12 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	msg[1]="Heya,\n\nThe file '$name' from $start is of type '$type' and could not be used.\n\nStream Upload server\n"
 	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
-	then
+	then # All ingredients for a mail present
 		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
 			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
 			Log "== Mail with subject '${sbj[$1]}' failed to send"
 		Log "Start encoding on $start, finished on $finish"
-	else
+	else # Can't send
 		Log "== Mail with subject '${sbj[$1]}' could not be sent"
 		(($1==2)) && Log "Start encoding on $start, error on $finish"
 	fi
@@ -46,11 +52,8 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 
 # Rename upload and check type
 file=${upload%.upload} video=$file.mp4 name=${file##*/} key=${name%%.*}
-rest=${name#*.} date=${rest:0:15} _=${rest:15} email=${_%@*}
+rest=${name#*.} date=${rest:0:15} _=${rest:16} username=${_%%:*} _=${_%@*} email=${_#${username}}
 mv "$upload" "$file"
-
-# Strip the '_' if email set
-[[ $email ]] && email=${email:1}
 
 type=$(file -bL --mime-type "$file")
 [[ ! ${type:0:5} = video ]] && Mail 1 "File $name is of type $type"

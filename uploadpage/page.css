@@ -37,7 +37,7 @@ body {
 	max-width:450px;
 }
 p {
-  flex-wrap: nowrap;
+	flex-wrap:nowrap;
 }
 table {
 	width:100%;

@@ -1,32 +1,28 @@
-<!DOCTYPE html>
+<?php // Schedule page
+require "check.php";
+$user=$_SESSION['user'];
+print('<!DOCTYPE html>
 <meta charset="utf-8">
-<title>Stream Upload</title>
+<title>Stream Upload scheduling</title>
 <link rel="icon" href="favicon.png">
 <link rel="stylesheet" href="page.css">
 <script>
 function respond(){
-	const feedback = document.getElementById('response');
-	feedback.innerHTML = '<b>File is uploading</b>';
+	const feedback = document.getElementById("response");
+	feedback.innerHTML = "<b>File is uploading</b>";
 }
 </script>
 <div class="container">
 	<div class="incontainer">
 		<table>
-<?php
-$headers=getallheaders();
-$authuser=$headers['X-User'];
-if($authuser!==''){
-	print('
-			<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://nouser:wrongpw@'.$_SERVER['HTTP_HOST'].'" method="post">
 				<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
 				<tr>
 					<td class="left">User:</td>
-					<td class="right"><b>'.$authuser.'</b></td>
-					<td><input class="shiftleft" type="submit" value="Logoff"></td></tr>
-			</form>');
-}
-			print('<form action="'.(isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].'/upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">');
-?>
+					<td class="right"><b>'.$user.'</b></td>
+					<form action="check.php" method="post">
+						<td><input class="shiftleft" type="submit" name="logoff" value="Logoff"></td>
+					</form></tr>
+			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 				<tr>
 					<td>Target:</td>
 					<td>
@@ -49,10 +45,11 @@ if($authuser!==''){
 					<td class="left">Notify email:</td>
 					<td class="right"><input type="email" name="email" title="Not required"></td></tr>
 				<tr><td><br></td></tr>
-				<tr><td></td><td><input type="submit" value="Schedule Stream" name="submit"></td></tr>
+				<tr><td></td><td><input type="submit" value="Schedule Stream" name="schedule"></td></tr>
 				<tr><td><br></td></tr>
 				<tr><td align=center colspan="2" id="response"></td></tr>
 			</form>
 		</table>
 	</div>
-</div>
+</div>');
+?>
