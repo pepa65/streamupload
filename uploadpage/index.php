@@ -15,17 +15,17 @@ function respond(){
 <div class="container">
 	<div class="incontainer">
 		<table>
-				<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
-				<tr>
-					<td class="left">User:</td>
-					<td class="right"><b>'.$user.'</b></td>
-					<form action="check.php" method="post">
-						<td><input class="shiftleft" type="submit" name="logoff" value="Logoff"></td>
-					</form></tr>
+			<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
+			<tr>
+				<td class="left">User:</td>
+				<td class="right"><b>'.$user.'</b></td>
+				<form action="check.php" method="post">
+					<td><input class="shiftleft" type="submit" name="logoff" value="Logoff"></td>
+				</form></tr>
 			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 				<tr>
-					<td>Target:</td>
-					<td>
+					<td class="left">Target:</td>
+					<td class="right">
 						<select name="target" id="target" required>
 							<option value="" disabled selected hidden>Streaming Destination</option>
 							<option value="Restream">Restream</option>
@@ -37,8 +37,8 @@ function respond(){
 					<td class="left">Streamkey:</td>
 					<td class="right"><input type="text" name="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
 				<tr>
-					<td>Date & Time:</td>
-					<td><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
+					<td class="left">Date & Time:</td>
+					<td class="right"><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
 				<tr>
 					<td class="left">Video File:</td>
 					<td class="right"><input type="file" name="file" required accept=".mp4"></td></tr>
