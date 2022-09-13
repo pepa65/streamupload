@@ -14,43 +14,25 @@ function respond(){
 </script>
 <div class="container">
 	<div class="incontainer">
-		<table>
-			<tr><td></td><td align="center"><h1>Stream Upload</h1></td></tr>
-			<tr>
-				<td class="left">User:</td>
-				<td class="right"><b>'.$user.'</b></td>
-				<form action="check.php" method="post">
-					<td><input class="shiftleft" type="submit" name="logoff" value="Logoff"></td>
-				</form></tr>
-			<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
-				<tr>
-					<td class="left">Target:</td>
-					<td class="right">
-						<select name="target" id="target" required>
-							<option value="" disabled selected hidden>Streaming Destination</option>
-							<option value="Restream">Restream</option>
-							<option value="Facebook">Facebook</option>
-							<option value="YouTube">YouTube</option>
-						</select>
-					</td></tr>
-				<tr>
-					<td class="left">Streamkey:</td>
-					<td class="right"><input type="text" name="streamkey" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+"></td></tr>
-				<tr>
-					<td class="left">Date & Time:</td>
-					<td class="right"><input type="datetime-local" name="datetime" title="Click on the date to get a popup" required></td></tr>
-				<tr>
-					<td class="left">Video File:</td>
-					<td class="right"><input type="file" name="file" required accept=".mp4"></td></tr>
-				<tr>
-					<td class="left">Notify email:</td>
-					<td class="right"><input type="email" name="email" title="Not required"></td></tr>
-				<tr><td><br></td></tr>
-				<tr><td></td><td class="right"><input type="submit" value="Schedule Stream" name="schedule"></td></tr>
-				<tr><td><br></td></tr>
-				<tr><td align=center colspan="2" id="response"></td></tr>
-			</form>
-		</table>
+		<h1>Stream Upload</h1>
+		<div class="user"><p>User: <b>'.$user.'</b></p>
+			<form action="check.php" method="post">
+				<input id="logoff" type="submit" name="logoff" value="Logoff">
+			</form></div>
+		<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
+			<select name="target" id="target" required>
+				<option value="" disabled selected hidden>Streaming Destination</option>
+				<option value="Restream">Restream</option>
+				<option value="Facebook">Facebook</option>
+				<option value="YouTube">YouTube</option>
+			</select>
+			<input type="text" name="streamkey" placeholder="Stream Key" required title="string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+">
+			<input type="datetime-local" name="datetime" title="Click on the date to get a popup" required>
+			<input type="file" name="file" required accept=".mp4">
+			<input type="email" name="email" placeholder="Email to notify" title="Not required">
+			<input type="submit" value="Schedule Stream" name="schedule">
+			<p id="response"></p>
+		</form>
 	</div>
 </div>');
 ?>

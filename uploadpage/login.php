@@ -27,19 +27,17 @@ print('<!DOCTYPE html>
 <link rel="stylesheet" href="page.css">
 <div class="container">
 	<div class="incontainer">
-		<table class="single">
-			<tr><td align="center"><h1>Stream Upload</h1></td></tr>');
+		<h1>Stream Upload</h1>');
 if(isset($_POST['login'])){
 	print('
-			<tr><td><h4>Invalid User or Password</h4></td></tr>');
+		<h4>Invalid Username or Password</h4>');
 }
 print('
-			<form action="login.php" method="post">
-				<tr><td><input type="text" name="user" placeholder="Username" required title="string of 0-9, a-z, A-Z" pattern="[a-zA-Z0-9]+"></td></tr>
-				<tr><td><input type="password" name="password" placeholder="Password" required></td></tr>
-				<tr><td><input type="submit" name="login" value="Login"></td></tr>
-			</form>
-		</table>
+		<form action="login.php" method="post">
+			<input type="text" name="user" placeholder="Username" required title="string of 0-9, a-z, A-Z" pattern="[a-zA-Z0-9]+">
+			<input type="password" name="password" placeholder="Password" required>
+			<input type="submit" name="login" value="Login">
+		</form>
 	</div>
 </div>');
 ?>

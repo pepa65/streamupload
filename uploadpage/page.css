@@ -1,4 +1,5 @@
 input,select {
+	text-align:center;
 	width:100%;
 	padding:12px 20px;
 	margin:0;
@@ -10,6 +11,7 @@ input,select {
 }
 
 input[type=submit] {
+	text-align:center;
 	width:100%;
 	background-color:#4CAF50;
 	color:white;
@@ -33,34 +35,23 @@ body {
 	height:100vh;
 }
 .incontainer {
-	width:550px;
-	max-width:550px;
+	width:325px;
+	max-width:325px;
 }
-p {
-	flex-wrap:nowrap;
+h1 {
+	text-align:center;
 }
 h4 {
 	text-align:center;
-	color:red;
-	background-color:light-red;
+	color:white;
+	background-color:red;
 	padding:.7em;
 }
-table {
+.user {
+	display:flex;
 	width:100%;
+	justify-content:space-between;
 }
-.single {
-	margin:auto;
-	width:325px;
-}
-.left {
-	width:225px;
-	padding-right:10px;
-	text-align:right;
-}
-.right {
-	width:325px;
-}
-.shiftleft {
-	position:relative;
-	left:-95px;
+#logoff {
+	width:100px;
 }
