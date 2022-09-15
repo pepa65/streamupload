@@ -20,13 +20,12 @@ h4 {
 	color:white;
 	background-color:red;
 	padding:.9em;
-	margin-bottom:8px;
 }
 input,select {
 	text-align:center;
 	width:100%;
 	padding:12px 20px;
-	margin:5px 0;
+	margin:3px 0;
 	display:inline-block;
 	border:1px solid #ccc;
 	border-radius:4px;
@@ -35,17 +34,17 @@ input,select {
 	font-weight:bold;
 }
 select {
+	margin-top:10px;
 	cursor:pointer;
 	padding-top:12px;
 	padding-bottom:-7px;
 }
 input[type=datetime-local] {
 	cursor:pointer;
-	margin-bottom:-1px;
+	margin-bottom:-3px;
 }
 input[type=email] {
-	margin-top:5px;
-	margin-bottom:5px;
+	margin-bottom:15px;
 }
 input[type=file] {
 	background-color:#4CAF50;
@@ -57,7 +56,7 @@ input[type=submit] {
 	background-color:#4CAF50;
 	color:white;
 	padding:14px 20px;
-	margin:8px 0;
+	margin:10px 0;
 	border:none;
 	cursor:pointer;
 }
