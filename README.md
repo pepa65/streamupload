@@ -59,14 +59,14 @@ Make the config file `/root/Caddyfile` like:
 #!/usr/bin/env bash
 
 # Make sure internet is reachable
-while ! /usr/bin/ping -q -c 1 1.1.1.1 &>/dev/null
+while ! ping -q -c 1 1.1.1.1 &>/dev/null
 do sleep 1
 done
 
 cd /root
 /usr/local/bin/caddy stop &>/dev/null
 sleep 1
-/usr/bin/killall -9 caddy &>/dev/null
+killall -9 caddy &>/dev/null
 /usr/local/bin/caddy start &>/root/caddy.log
 ```
   and make it executable: `chmod +x /root/Caddy`.

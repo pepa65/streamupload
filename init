@@ -20,9 +20,9 @@ sed -i "s/%sslmail%/$sslmail/" /root/Caddyfile
 [[ $interface ]] || interface=:80
 sed -i "s/%interface%/$interface/" /root/Caddyfile
 
-chmod +x /usr/bin/caddy /usr/bin/mailer
+chmod +x /usr/local/bin/caddy /usr/local/bin/mailer
 
 php-fpm8 -R
-caddy start --config /root/Caddyfile --adapter caddyfile >caddy.log
+/usr/local/bin/caddy start --config /root/Caddyfile --adapter caddyfile >caddy.log
 
 sleep 9999d
