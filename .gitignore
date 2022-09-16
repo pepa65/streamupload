@@ -1,5 +1,6 @@
 vars
 mailhash
+mailer.log
 web.log
 process.log
 uploadpage/streams/*

@@ -60,7 +60,7 @@ type=$(file -bL --mime-type "$file")
 # Encode video
 start=$(date +'%Y-%m-%d at %H:%M:%S') error=0
 ## Single pass
-#ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video" ||
+#ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video"  |tail -n 20 >"$file.0log" || error=1
 # Double pass
 set -o pipefail  # to get ffmpeg's returncode
 ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.1log" &&
