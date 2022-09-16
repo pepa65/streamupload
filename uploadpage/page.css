@@ -88,7 +88,7 @@ input[type=submit] {
 	display:flex;
 	flex-direction:rows;
 	text-align:center;
-	space-between;
+	justify-content:space-between;
 }
 input[type=date] {
 	width:56%;
@@ -96,7 +96,7 @@ input[type=date] {
 	padding-right:0;
 }
 input[type=time] {
-	width:40%;
+	width:42%;
 	padding-left:0;
 	padding-right:0;
 }
