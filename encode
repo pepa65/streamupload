@@ -38,7 +38,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
 	then # All ingredients for a mail present
-		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" &&
+		mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" 2>"$repopath/mailer.log" &&
 			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
 			Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
 		Log "Start encoding on $start, finished on $finish"

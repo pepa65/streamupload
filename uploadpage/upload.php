@@ -70,6 +70,6 @@ if(!move_uploaded_file($_FILES['file']['tmp_name'], $file)){
 }
 
 print('<p>Streaming <b>'.$name.'.mp4</b></p>');
-print('<p>When done, an email will be sent to <b>'.$to.'</b></p>');
+print('<p>When done encoding, email <b>'.$to.'</b></p>');
 Back('Streaming on <b>'.$date.'</b> at <b>'.$hour.':'.$min.'</b>h on <b>'.$target.'</b>');
 ?>
