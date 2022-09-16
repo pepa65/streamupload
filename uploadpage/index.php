@@ -37,10 +37,9 @@ function filename(){
 				<option value="YouTube">YouTube</option>
 			</select>
 			<input type="text" name="streamkey" placeholder="Stream Key" required title="Enter a string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+">
-			<!--input type="datetime-local" name="datetime" title="Click on the date to get a popup" required-->
 			<div class="datetime">
-				<input type="date" name="date" title="Click on the date to get a popup" required>
-				<input type="time" name="time" title="Click on the time to get a popup" required></div>
+				<input type="date" name="date" title="Enter the date" required>
+				<input type="time" name="time" title="Enter the time" required></div>
 			<input type="email" name="email" placeholder="Email to notify" title="Not required">
 			<input type="submit" value="Schedule Stream" name="schedule">
 			<p id="response"></p>

@@ -23,22 +23,22 @@ foreach($mh as $line){
 }
 $upload=htmlspecialchars(basename($_FILES['file']['name']));
 $key=$_POST['streamkey'];
-$datetime=$_POST['datetime'];
+$date=$_POST['date'];
+$time=$_POST['time'];
 $email=$_POST['email'];
 $user=$_SESSION['user'];
+$target=$_POST['target'];
 if($email){
 	$to=$email;
 	$email=':'.$email;
 }else{
 	$to=$mails[$user];
 }
-$date=substr($datetime, 0, 10);
-$hour=substr($datetime, 11, 2);
-$min=substr($datetime, 14, 2);
-$time=$hour.$min;
-$target=$_POST['target'];
+$hour=substr($time, 0, 2);
+$min=substr($time, 3, 2);
+$tme=$hour.$min;
 $dir='streams/';
-$name=$key.'.'.$date.'_'.$time.'_'.$user.$email.'@'.$target;
+$name=$key.'.'.$date.'_'.$tme.'_'.$user.$email.'@'.$target;
 $file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
@@ -51,15 +51,18 @@ print('<!DOCTYPE html>
 	</form></div><div class="container">
 <h1>Encoding</h1>
 <p>Uploaded <b>'.$upload.'</b></p>');
-if(preg_match('/20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]T[0-2][0-9]:[0-6][0-9]/', $datetime)===false){
-	Back('Date/time somehow incorrect: '.$datetime);
+if(preg_match('/20[0-9][0-9]-[0-1][0-9]-[0-3][0-9]/', $date)===false){
+	Back('Date somehow incorrect: '.$date);
+}
+if(preg_match('/[0-2][0-9]:[0-6][0-9]/', $time)===false){
+	Back('Time somehow incorrect: '.$time);
 }
 $now=date('Y-m-dHi');
-if(strcmp($now, $date.$time)>0){
+if(strcmp($now, $date.$tme)>=0){
 	Back('Scheduling '.$now.' in the past: '.$date.' '.$time);
 }
 $nextyear=date('Y-m-dHi', strtotime('+1 year'));
-if(strcmp($nextyear, $date.$time)<0){
+if(strcmp($nextyear, $date.$tme)<0){
 	Back('Scheduling too far into the future: '.$date.' '.$time);
 }
 if($_FILES['file']['error']!=UPLOAD_ERR_OK){
@@ -71,5 +74,5 @@ if(!move_uploaded_file($_FILES['file']['tmp_name'], $file)){
 
 print('<p>Streaming <b>'.$name.'.mp4</b></p>');
 print('<p>When done encoding, email <b>'.$to.'</b></p>');
-Back('Streaming on <b>'.$date.'</b> at <b>'.$hour.':'.$min.'</b>h on <b>'.$target.'</b>');
+Back('Streaming on <b>'.$date.'</b> at <b>'.$time.'</b>h on <b>'.$target.'</b>');
 ?>

@@ -37,6 +37,47 @@ h4 {
 	background-color:red;
 	padding:.9em;
 }
+::file-selector-button {
+	-moz-opacity:0;
+	filter:alpha(opacity:0);
+	opacity:0;
+}
+.fileinput {
+	position:relative;
+	max-width:fit-content(325px);
+}
+#name {
+	padding-top:5px;
+	font-weight:bold;
+	width:100%;
+	text-align:center;
+	white-space:nowrap;
+	overflow:hidden;
+	text-overflow:ellipsis;
+}
+input.abs {
+	background-color:#cfc;
+	padding:14px 20px;
+	margin:8px 0;
+	border:1px solid #aaa;
+	border-radius:4px;
+	box-sizing:border-box;
+	cursor:pointer;
+	font-size:16px
+}
+.abs {
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:1;
+}
+#input {
+	position:relative;
+	-moz-opacity:0;
+	filter:alpha(opacity:0);
+	opacity:0;
+	z-index:2;
+}
 input,select {
 	background-color:#fff;
 	text-align:center;
@@ -75,15 +116,6 @@ input[type=submit] {
 	border:none;
 	cursor:pointer;
 }
-::file-selector-button {
-	-moz-opacity:0;
-	filter:alpha(opacity:0);
-	opacity:0;
-}
-.fileinput {
-	position:relative;
-	max-width:fit-content(325px);
-}
 .datetime {
 	display:flex;
 	flex-direction:rows;
@@ -99,36 +131,4 @@ input[type=time] {
 	width:42%;
 	padding-left:0;
 	padding-right:0;
-}
-#name {
-	padding-top:5px;
-	font-weight:bold;
-	width:100%;
-	text-align:center;
-	white-space:nowrap;
-	overflow:hidden;
-	text-overflow:ellipsis;
-}
-input.abs {
-	background-color:#cfc;
-	padding:14px 20px;
-	margin:8px 0;
-	border:1px solid #aaa;
-	border-radius:4px;
-	box-sizing:border-box;
-	cursor:pointer;
-	font-size:16px
-}
-.abs {
-	position:absolute;
-	top:0px;
-	left:0px;
-	z-index:1;
-}
-#input {
-	position:relative;
-	-moz-opacity:0;
-	filter:alpha(opacity:0);
-	opacity:0;
-	z-index:2;
 }
