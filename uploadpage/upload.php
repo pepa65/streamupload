@@ -8,7 +8,7 @@ if(!isset($_POST['schedule'])){ // If not post: start again
 function Back($msg){
 	print('<p>'.$msg.'</p>
 <form action="index.php" method="post">
-<input type="submit" value="Upload another file" name="submit">
+<input type="submit" value="Upload another file" name="submit" autofocus>
 </form></div>');
 	exit;
 }

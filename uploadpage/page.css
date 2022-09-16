@@ -84,6 +84,22 @@ input[type=submit] {
 	position:relative;
 	max-width:fit-content(325px);
 }
+.datetime {
+	display:flex;
+	flex-direction:rows;
+	text-align:center;
+	space-between;
+}
+input[type=date] {
+	width:56%;
+	padding-left:0;
+	padding-right:0;
+}
+input[type=time] {
+	width:40%;
+	padding-left:0;
+	padding-right:0;
+}
 #name {
 	padding-top:5px;
 	font-weight:bold;

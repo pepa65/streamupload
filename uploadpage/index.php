@@ -26,8 +26,8 @@ function filename(){
 		<h1>Stream Upload</h1>
 		<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
 			<div class="fileinput">
-				<input id="input" type="file" name="file" required accept=".mp4" onchange="filename()">
-				<input class="abs" id="fakeinput">
+				<input id="input" type="file" name="file" required accept=".mp4" onchange="filename()" autofocus>
+				<input class="abs" id="fakeinput" tabindex="-1">
 				<p class="abs" id="name">Click to select the video</p>
 			</div>
 			<select name="target" id="target" required title="Click to select where to stream to">
@@ -37,8 +37,10 @@ function filename(){
 				<option value="YouTube">YouTube</option>
 			</select>
 			<input type="text" name="streamkey" placeholder="Stream Key" required title="Enter a string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+">
-			<input type="datetime-local" name="datetime" title="Click on the date to get a popup" required>
-			<!--input type="file" name="file" required accept=".mp4" title="Click to select a video"-->
+			<!--input type="datetime-local" name="datetime" title="Click on the date to get a popup" required-->
+			<div class="datetime">
+				<input type="date" name="date" title="Click on the date to get a popup" required>
+				<input type="time" name="time" title="Click on the time to get a popup" required></div>
 			<input type="email" name="email" placeholder="Email to notify" title="Not required">
 			<input type="submit" value="Schedule Stream" name="schedule">
 			<p id="response"></p>

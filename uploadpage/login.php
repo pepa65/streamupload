@@ -36,7 +36,7 @@ print('
 		<form action="login.php" method="post">
 			<input type="text" name="user" placeholder="Username" required title="string of 0-9, a-z, A-Z" pattern="[a-zA-Z0-9]+">
 			<input type="password" name="password" placeholder="Password" required>
-			<input type="submit" name="login" value="Login">
+			<input type="submit" name="login" value="Login" autofocus>
 		</form>
 	</div>
 </div>');
