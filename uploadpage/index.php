@@ -14,18 +14,22 @@ function respond(){
 function filename(){
 	var name = document.getElementById("name");
 	name.innerHTML = document.getElementById("input").files[0].name;
-	name.style.color = "black";
 	name.style.fontWeight = "normal";
 }
 </script>
+<div class="user"><p class="user">User:&nbsp;<b>'.$user.'</b></p>
+	<form action="check.php" method="post">
+		<input id="logoff" type="submit" name="logoff" value="Logoff">
+	</form></div>
 <div class="container">
 	<div class="incontainer">
 		<h1>Stream Upload</h1>
-		<div class="user"><p>User: <b>'.$user.'</b></p>
-			<form action="check.php" method="post">
-				<input id="logoff" type="submit" name="logoff" value="Logoff">
-			</form></div>
 		<form action="upload.php" method="post" enctype="multipart/form-data" onsubmit="respond()">
+			<div class="fileinput">
+				<input id="input" type="file" name="file" required accept=".mp4" onchange="filename()">
+				<input class="abs" id="fakeinput">
+				<p class="abs" id="name">Click to select the video</p>
+			</div>
 			<select name="target" id="target" required title="Click to select where to stream to">
 				<option value="" disabled selected hidden>Streaming Destination</option>
 				<option value="Restream">Restream</option>
@@ -35,11 +39,6 @@ function filename(){
 			<input type="text" name="streamkey" placeholder="Stream Key" required title="Enter a string of 0-9, a-z, A-Z, underscore or dash characters" pattern="[a-zA-Z0-9_-]+">
 			<input type="datetime-local" name="datetime" title="Click on the date to get a popup" required>
 			<!--input type="file" name="file" required accept=".mp4" title="Click to select a video"-->
-			<div class="fileinput">
-				<input id="input" type="file" name="file" required accept=".mp4" onchange="filename()">
-				<input class="abs">
-				<p class="abs" id="name">Click to select the video</p>
-			</div>
 			<input type="email" name="email" placeholder="Email to notify" title="Not required">
 			<input type="submit" value="Schedule Stream" name="schedule">
 			<p id="response"></p>

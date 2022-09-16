@@ -1,15 +1,32 @@
 body {
+	background-color:#eee;
 	margin:0;
 	font-family:sans-serif;
 	font-size:16px;
 	text-align:center;
+}
+.user {
+	display:flex;
+	width:100%;
+	justify-content:left;
+	background-color:#ccc;
+	box-sizing:border-box;
+}
+p.user {
+	margin:0;
+	padding:.9em;
+}
+#logoff {
+	margin:0;
+	background-color:darkorange;
+	width:100px;
 }
 .container {
 	display:flex;
 	flex-direction:column;
 	justify-content:center;
 	align-items:center;
-	height:100vh;
+	height:95vh;
 }
 .incontainer {
 	width:325px;
@@ -17,38 +34,36 @@ body {
 }
 h4 {
 	border-radius:4px;
-	color:white;
 	background-color:red;
 	padding:.9em;
 }
 input,select {
+	background-color:#fff;
 	text-align:center;
 	width:100%;
 	padding:12px 20px;
 	margin:3px 0;
 	display:inline-block;
-	border:1px solid #ccc;
+	border:1px solid #aaa;
 	border-radius:4px;
 	box-sizing:border-box;
 	font-size:16px;
 	font-weight:bold;
 }
 select {
-	margin-top:10px;
+	background-color:#fff;
+	margin-top:5px;
 	cursor:pointer;
 	padding-top:12px;
 	padding-bottom:-7px;
 }
 input[type=datetime-local] {
 	cursor:pointer;
-	margin-bottom:-3px;
 }
 input[type=email] {
 	margin-bottom:15px;
 }
 input[type=file] {
-	background-color:#4CAF50;
-	color:white;
 	text-align:left;
 	cursor:pointer;
 }
@@ -60,26 +75,17 @@ input[type=submit] {
 	border:none;
 	cursor:pointer;
 }
-.user {
-	display:flex;
-	width:100%;
-	justify-content:space-between;
-}
-#logoff {
-	width:100px;
-}
-/*::file-selector-button {
+::file-selector-button {
 	-moz-opacity:0;
 	filter:alpha(opacity:0);
 	opacity:0;
-}*/
+}
 .fileinput {
 	position:relative;
 	max-width:fit-content(325px);
 }
 #name {
 	padding-top:5px;
-	color:white;
 	font-weight:bold;
 	width:100%;
 	text-align:center;
@@ -88,11 +94,12 @@ input[type=submit] {
 	text-overflow:ellipsis;
 }
 input.abs {
-	background-color:#4CAF50;
+	background-color:#cfc;
 	padding:14px 20px;
 	margin:8px 0;
-	border:none;
+	border:1px solid #aaa;
 	border-radius:4px;
+	box-sizing:border-box;
 	cursor:pointer;
 	font-size:16px
 }
