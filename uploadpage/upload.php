@@ -1,7 +1,8 @@
 <?php // Encode page
 session_start();
 require "check.php";
-if(!isset($_POST['schedule'])){ // If not post: start again
+$user=$_SESSION['user'];
+if(!isset($_POST['schedule']) || empty($user)){ // If not post: start again
 	header('Location: index.php');
 }
 
@@ -26,7 +27,6 @@ $key=$_POST['streamkey'];
 $date=$_POST['date'];
 $time=$_POST['time'];
 $email=$_POST['email'];
-$user=$_SESSION['user'];
 $target=$_POST['target'];
 if($email){
 	$to=$email;
