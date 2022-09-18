@@ -13,9 +13,10 @@
 * Move the `streamupload` directory to a place that is accessible to the web
   server, like: `mv streamupload /var/www` and `cd` to that place. Now the
   output of `pwd` is the value for `$repopath`.
-* Copy `_vars` to `vars` and `_mailhash` to `mailhash` and set the variables
-  in `vars` (webserver, SMTP-server) and `mailhash` (usernames, emails and
-  bcrypt-password-hashes).
+* Copy `_vars` to `vars`, `_mailhash` to `mailhash` and `_countdown` to
+  `countdown` and set the variables in `vars` (webserver, SMTP-server),
+  `mailhash` (usernames, emails and bcrypt-password-hashes) and `countdown`
+  (if any countdown-files can be used).
 * Make a crontab-entry: "* * * * *  $repopath/encode" (replace `$repopath`!).
 * Install the `mailer` binary by downloading it from the repo at
   https://https://github.com/pepa65/mailer/releases/latest and moving it to
@@ -39,7 +40,7 @@ Make the config file `/root/Caddyfile` like:
 
 :80 {
 	log {
-		output file $weblogfile
+		output file $repopath/web.log
 	}
 	php_fastcgi unix//run/php/php-fpm.sock
 	root * $repopath/uploadpage
@@ -49,8 +50,7 @@ Make the config file `/root/Caddyfile` like:
 * If the server IP has an DNS A record pointing to it, `:80` can be replaced
   by the domainname with the A record, and it will be SSL-encrypted.
 * Replace `$email` with an email for the SSL-certificates.
-* Replace `$weblogfile` with a path for a webserver logfile.
-* Replace `$repopath` (see above in Install).
+* Replace `$repopath` in both places (see above in Install).
 * The value of `/run/php/php-fpm.sock` might need to be adjusted, depending
   on the system used, it needs to be the unix socket for php.
 * Caddy can be started at boottime by including `@reboot  /root/Caddy` as a
@@ -82,7 +82,7 @@ In case of a domainname, replace `8080:80` by `443:443`.
 ## Usage
 * Get a streamkey for the target by scheduling a stream
   (supported are: Restream.io, YouTube.com, Facebook.com).
-* Go to the server's URL in the browser: `http://$ipaddress:8080` or to the
-  domainname if available: `https://$domainname`.
+* Go to the server's URL in the browser: `http://$ipaddress:80` or for docker:
+  `http://$ipaddress:80` or in case of a domainname: `https://$domainname`.
 * Log in with the username and passwors as prepared in `mailhash`.
 * Fill in the form, and click "Schedule Stream".

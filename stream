@@ -23,3 +23,6 @@ set -o pipefail  # to get ffmpeg's returncode
 ffmpeg -re -y -i "$in" -c:v copy -c:a copy -f flv "$rtmp" |tail -n 20 >"$in.log" &&
 	rm "$in.log" "$in" "${in%.mp4}" ||
 	echo "Error while streaming $1" >>"$log"
+
+# In any case, comment-out the crontab entry so it's not waiting for next year
+crontab -l| sed "/$1/ s/^/#/" |crontab -

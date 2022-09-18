@@ -8,7 +8,7 @@ tz='Asia/Bangkok'
 # Defaults to ':80'
 interface=''
 
-# Email for registering SSL-certificate
+# Email for registering SSL-certificates
 sslmail='(valid email)'
 
 # Variables for mailer
