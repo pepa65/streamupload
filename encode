@@ -9,7 +9,7 @@
 # Check for oldest uploaded file
 _=$(readlink -f -- "${BASH_SOURCE:-$0}") repopath=${_%/*}
 log=$repopath/process.log dir=$repopath/uploadpage/streams
-upload=$(ls -tr "$dir"/*.upload 2>/dev/null |head -1)
+upload=$(ls -Atr "$dir"/*.upload 2>/dev/null |head -1)
 
 # Finished if no uploadpage/streams/*.upload files found
 [[ $upload ]] || exit 0
@@ -31,8 +31,8 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	[[ $email ]] && to=${email:1}
 	[[ $port ]] || port=587
 	# If ssltls is not empty, switch to SSL/TLS
-	[[ $ssltls ]] && $ssltls='-T'
-	[[ $bcc ]] && $bcc='-b '.$bcc
+	[[ $ssltls ]] && ssltls='-T'
+	[[ $bcc ]] && bcc='-b '.$bcc
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"
