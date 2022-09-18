@@ -20,7 +20,7 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,username,name,type,start,finish
-	source "$repopath/vars"  # I:user,password,smtp,port,ssltls
+	source "$repopath/vars"  # I:user,password,smtp,port,ssltls.bcc
 	local sbj msg to from="Stream Upload server"
 	mapfile -t <"$repopath/mailhash"
 	for line in "${MAPFILE[@]}"
@@ -32,6 +32,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	[[ $port ]] || port=587
 	# If ssltls is not empty, switch to SSL/TLS
 	[[ $ssltls ]] && $ssltls='-T'
+	[[ $bcc ]] && $bcc='-b '.$bcc
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"
@@ -40,7 +41,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
 	then # All ingredients for a mail present
-		/usr/local/bin/mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" $ssltls -f "$from" 2>"$repopath/mailer.log" &&
+		/usr/local/bin/mailer -m "$(echo -e "${msg[$1]}")" -t "$to" $bcc -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" $ssltls -f "$from" 2>"$repopath/mailer.log" &&
 			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
 			Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
 		Log "Start encoding on $start, finished on $finish"

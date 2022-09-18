@@ -20,3 +20,5 @@ smtp=''
 port=''
 # Defaults to StartTLS when empty, otherwise SSL/TLS
 ssltls='true'
+# When empty, no BCC gets sent
+bcc=''
