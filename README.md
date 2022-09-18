@@ -13,6 +13,8 @@
 * Move the `streamupload` directory to a place that is accessible to the web
   server, like: `mv streamupload /var/www` and `cd` to that place. Now the
   output of `pwd` is the value for `$repopath`.
+* do `mkdir "$repopath/uploadpage/streams"` and
+  `chmod 777 "$repopath/uploadpage/streams"`.
 * Copy `_vars` to `vars`, `_mailhash` to `mailhash` and `_countdown` to
   `countdown` and set the variables in `vars` (webserver, SMTP-server),
   `mailhash` (usernames, emails and bcrypt-password-hashes) and `countdown`
