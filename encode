@@ -15,15 +15,15 @@ upload=$(ls -Atr "$dir"/*.upload 2>/dev/null |head -1)
 [[ $upload ]] || exit 0
 
 Log(){ # 1:message 2:returncode(empty: no exit) I:file
-	echo "$1">>"$log"
+	echo -e "$1">>"$log"
 	[[ $2 ]] && exit $2 || return 0
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,username,name,type,start,finish
-	source "$repopath/vars"  # I:user,password,smtp,port,ssltls.bcc
-	local sbj msg to from="Stream Upload server"
-	mapfile -t <"$repopath/mailhash"
-	for line in "${MAPFILE[@]}"
+	local lines line message sbj msg to from="Stream Upload server" user password smtp port ssltls bcc
+	source "$repopath/vars"  # I:user,password,smtp,port,ssltls,bcc
+	mapfile -t lines <"$repopath/mailhash"
+	for line in "${lines[@]}"
 	do [[ ${line:0:1} = '#' ]] && continue
 		[[ $username = ${line%%$'\t'*} ]] && _=${line#*$'\t'} to=${_%$'\t'*} && break
 	done
@@ -32,23 +32,25 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	[[ $port ]] || port=587
 	# If ssltls is not empty, switch to SSL/TLS
 	[[ $ssltls ]] && ssltls='-T'
-	[[ $bcc ]] && bcc='-b '.$bcc
+	[[ $bcc ]] && bcc="-b $bcc"
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"
-	msg[0]="Heya,\n\nEncoded video with tag '$name'.\nEncoding started on $start and finished on $finish.\n\nStream Upload server"
-	msg[1]="Heya,\n\nThe file '$name' from $start is of type '$type' and could not be used.\n\nStream Upload server\n"
-	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
+	msg[0]="Encoded video with tag '$name'.\nEncoding started on $start and finished on $finish."
+	msg[1]="The file '$name' from $start is of type '$type' and could not be used."
+	msg[2]="The file '$name' started encoding on $start but ran into an error on $finish."
+	message="Heya,\n\n${msg[$1]}\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
-	then # All ingredients for a mail present
-		/usr/local/bin/mailer -m "$(echo -e "${msg[$1]}")" -t "$to" $bcc -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" $ssltls -f "$from" 2>"$repopath/mailer.log" &&
-			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
-			Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
-		Log "Start encoding on $start, finished on $finish"
+	then # All required ingredients for a mail present
+		/usr/local/bin/mailer -m "$(echo -e "$message")" -t "$to" $bcc -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" $ssltls -f "$from" >>"$repopath/mailer.log"
+		err=$?
+		((err==0)) && Log "== Mail with subject '${sbj[$1]}' sent to $to"
+		((err==1)) && Log "== Mail with subject '${sbj[$1]}' could not be sent"
+		((err==2)) && Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
 	else # Can't send
-		Log "== Mail with subject '${sbj[$1]}' could not be sent"
-		(($1==2)) && Log "Start encoding on $start, error on $finish"
+		Log "== Mail with subject '${sbj[$1]}' cannot be sent"
 	fi
+	Log "${msg[$1]}"
 	Log "$2" $1
 }
 
@@ -82,9 +84,8 @@ then
 	ffmpeg -f concat -safe 0 -i <(echo -e "file '$countdown'\nfile '$video'") -c copy "${video%.mp4}_.mp4" 2>&1 |tail -n 20 >"$file.3log"
 	mv "${video%.mp4}_.mp4" "$video"
 fi
-Log ".. $id $countdown $video"
 
-# Remove tailfiles if no errors
+# Remove tailfiles
 rm -- "$file".?log
 
 # Schedule cron job
