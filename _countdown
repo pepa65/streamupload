@@ -1,0 +1,3 @@
+# Separated by TABs: id(1 unique character: A-Z, a-z, 0-9) / name[for dropdown menu]
+# The id refers to a video in streams whose name starts with a dot followed by the id.
+A	Two-minute countdown

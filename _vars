@@ -18,3 +18,5 @@ password='(smtp password)'
 smtp=''
 # Defaults to: '587'
 port=''
+# Defaults to; '' (StartTLS)
+ssltls='1'

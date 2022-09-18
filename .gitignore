@@ -1,5 +1,6 @@
-vars
+countdown
 mailhash
+vars
 mailer.log
 web.log
 process.log

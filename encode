@@ -20,7 +20,7 @@ Log(){ # 1:message 2:returncode(empty: no exit) I:file
 }
 
 Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,email,username,name,type,start,finish
-	source "$repopath/vars"  # I:user,password,smtp,port
+	source "$repopath/vars"  # I:user,password,smtp,port,ssltls
 	local sbj msg to from="Stream Upload server"
 	mapfile -t <"$repopath/mailhash"
 	for line in "${MAPFILE[@]}"
@@ -30,6 +30,8 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	# If email given, strip ':'
 	[[ $email ]] && to=${email:1}
 	[[ $port ]] || port=587
+	# If ssltls is not empty, switch to SSL/TLS
+	[[ $ssltls ]] && $ssltls='-T'
 	sbj[0]="Stream Upload encoding done for ${name##*@}"
 	sbj[1]="Stream Upload file wrong type: $type"
 	sbj[2]="Stream Upload error encoding"
@@ -38,7 +40,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 	msg[2]="Heya,\n\nThe file '$name' started encoding on $start but ran into an error on $finish.\n\nStream Upload server\n"
 	if [[ $to && $user && $password && $smtp && $port ]]
 	then # All ingredients for a mail present
-		/usr/local/bin/mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" -f "$from" 2>"$repopath/mailer.log" &&
+		/usr/local/bin/mailer -m "$(echo -e "${msg[$1]}")" -t "$to" -s "${sbj[$1]}" -u "$user" -p "$password" -S "$smtp" -P "$port" $ssltls -f "$from" 2>"$repopath/mailer.log" &&
 			Log "== Mail with subject '${sbj[$1]}' sent to $to" ||
 			Log "== Mail with subject '${sbj[$1]}' failed to send to: $to"
 		Log "Start encoding on $start, finished on $finish"
@@ -51,7 +53,7 @@ Mail(){ # 1:kind(0:done, 1:wrong type, 2:encoding error) 2:logline I:repopath,em
 
 # Rename upload and check type
 file=${upload%.upload} video=$file.mp4 name=${file##*/} key=${name%%.*}
-rest=${name#*.} date=${rest:0:15} _=${rest:16} _=${_%@*} username=${_%%:*} email=${_#$username}
+rest=${name#*.} date=${rest:0:15} id=${rest:15:1} _=${rest:16} _=${_%@*} username=${_%%:*} email=${_#$username}
 mv "$upload" "$file"
 
 type=$(file -bL --mime-type "$file")
@@ -63,14 +65,23 @@ start=$(date +'%Y-%m-%d at %H:%M:%S') error=0
 #ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -force_key_frames 'expr:gte(t,n_forced*2)' -c:a copy -tune zerolatency -f mp4 "$video"  |tail -n 20 >"$file.0log" || error=1
 # Double pass
 set -o pipefail  # to get ffmpeg's returncode
-ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.1log" &&
-	ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.2log" ||
+ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -vf "format=yuv420p,scale=1920x1080,setdar=16/9,fps=25" -video_track_timescale 18000 -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 1 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.1log" &&
+	ffmpeg -y -i "$file" -c:v libx264 -x264opts no-scenecut -vf "format=yuv420p,scale=1920x1080,setdar=16/9,fps=25" -video_track_timescale 18000 -b:v 6M -maxrate 6M -bufsize 12M -force_key_frames 'expr:gte(t,n_forced*2)' -movflags faststart -c:a copy -tune zerolatency -pass 2 -passlogfile "$file" -f mp4 "$video" 2>&1 |tail -n 20 >"$file.2log" ||
 	error=1
 
 # Remove logfiles
 rm "$file"-*
 finish=$(date +'%Y-%m-%d at %H:%M:%S')
 ((error)) && Mail 2 "Error encoding $name"
+
+# concatenate countdown
+if [[ ! $id = _ ]]
+then
+	countdown=$(ls -tr "$dir/.$id"*.mp4 2>/dev/null |head -1)
+	ffmpeg -f concat -safe 0 -i <(echo -e "file '$countdown'\nfile '$video'") -c copy "${video%.mp4}_.mp4" 2>&1 |tail -n 20 >"$file.3log"
+	mv "${video%.mp4}_.mp4" "$video"
+fi
+Log ".. $id $countdown $video"
 
 # Remove tailfiles if no errors
 rm -- "$file".?log

@@ -23,11 +23,16 @@ foreach($mh as $line){
 	}
 }
 $upload=htmlspecialchars(basename($_FILES['file']['name']));
-$key=$_POST['streamkey'];
-$date=$_POST['date'];
-$time=$_POST['time'];
-$email=$_POST['email'];
-$target=$_POST['target'];
+$key=htmlspecialchars($_POST['streamkey']);
+$date=htmlspecialchars($_POST['date']);
+$time=htmlspecialchars($_POST['time']);
+$email=htmlspecialchars($_POST['email']);
+$target=htmlspecialchars($_POST['target']);
+$id=htmlspecialchars($_POST['id']);
+if(substr($id, 0, 1)!=='_'){
+	$countdown=substr($id, 1);
+}
+$id=substr($id, 0, 1);
 if($email){
 	$to=$email;
 	$email=':'.$email;
@@ -38,7 +43,7 @@ $hour=substr($time, 0, 2);
 $min=substr($time, 3, 2);
 $tme=$hour.$min;
 $dir='streams/';
-$name=$key.'.'.$date.'_'.$tme.'_'.$user.$email.'@'.$target;
+$name=$key.'.'.$date.'_'.$tme.$id.$user.$email.'@'.$target;
 $file=$dir.$name.'.upload';
 print('<!DOCTYPE html>
 <meta charset="utf-8">
@@ -72,7 +77,11 @@ if(!move_uploaded_file($_FILES['file']['tmp_name'], $file)){
 	Back('Error moving the file');
 }
 
-print('<p>Streaming <b>'.$name.'.mp4</b></p>');
-print('<p>When done encoding, email <b>'.$to.'</b></p>');
+print('<p>Streaming <b>'.$name.'.mp4</b>');
+if(isset($countdown)){
+	print('<br><br>using <b>'.$countdown.'</b>');
+}
+print('</p>
+<p>When done encoding, email <b>'.$to.'</b></p>');
 Back('Streaming on <b>'.$date.'</b> at <b>'.$time.'</b>h on <b>'.$target.'</b>');
 ?>

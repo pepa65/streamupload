@@ -1,7 +1,7 @@
 <?php // Login page
 session_start();
 $user=$_POST['user'];
-if(!empty($user)){ // Login attempt
+if(!empty($user) && preg_match('/[A-Za-z0-9]+/', $user)!==false){ // Login attempt and valid input
 	// Read hash and check password
 	$mh=file(__DIR__.'/../mailhash',FILE_IGNORE_NEW_LINES & FILE_SKIP_EMPTY_LINES);
 	foreach($mh as $line){
